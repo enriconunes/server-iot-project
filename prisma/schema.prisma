@@ -1,0 +1,16 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model SensorReading {
+  id        Int      @id @default(autoincrement())
+  distance  Float
+  unit      String   @default("cm")
+  createdAt DateTime @default(now())
+
+  @@map("sensor_readings")
+}
