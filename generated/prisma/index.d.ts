@@ -18,6 +18,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  * 
  */
 export type SensorReading = $Result.DefaultSelection<Prisma.$SensorReadingPayload>
+/**
+ * Model BellState
+ * 
+ */
+export type BellState = $Result.DefaultSelection<Prisma.$BellStatePayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -149,6 +154,16 @@ export class PrismaClient<
     * ```
     */
   get sensorReading(): Prisma.SensorReadingDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.bellState`: Exposes CRUD operations for the **BellState** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more BellStates
+    * const bellStates = await prisma.bellState.findMany()
+    * ```
+    */
+  get bellState(): Prisma.BellStateDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -583,7 +598,8 @@ export namespace Prisma {
 
 
   export const ModelName: {
-    SensorReading: 'SensorReading'
+    SensorReading: 'SensorReading',
+    BellState: 'BellState'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -599,7 +615,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "sensorReading"
+      modelProps: "sensorReading" | "bellState"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -674,6 +690,80 @@ export namespace Prisma {
           count: {
             args: Prisma.SensorReadingCountArgs<ExtArgs>
             result: $Utils.Optional<SensorReadingCountAggregateOutputType> | number
+          }
+        }
+      }
+      BellState: {
+        payload: Prisma.$BellStatePayload<ExtArgs>
+        fields: Prisma.BellStateFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BellStateFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BellStatePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BellStateFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BellStatePayload>
+          }
+          findFirst: {
+            args: Prisma.BellStateFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BellStatePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BellStateFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BellStatePayload>
+          }
+          findMany: {
+            args: Prisma.BellStateFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BellStatePayload>[]
+          }
+          create: {
+            args: Prisma.BellStateCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BellStatePayload>
+          }
+          createMany: {
+            args: Prisma.BellStateCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.BellStateCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BellStatePayload>[]
+          }
+          delete: {
+            args: Prisma.BellStateDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BellStatePayload>
+          }
+          update: {
+            args: Prisma.BellStateUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BellStatePayload>
+          }
+          deleteMany: {
+            args: Prisma.BellStateDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BellStateUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.BellStateUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BellStatePayload>[]
+          }
+          upsert: {
+            args: Prisma.BellStateUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BellStatePayload>
+          }
+          aggregate: {
+            args: Prisma.BellStateAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBellState>
+          }
+          groupBy: {
+            args: Prisma.BellStateGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BellStateGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BellStateCountArgs<ExtArgs>
+            result: $Utils.Optional<BellStateCountAggregateOutputType> | number
           }
         }
       }
@@ -786,6 +876,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     sensorReading?: SensorReadingOmit
+    bellState?: BellStateOmit
   }
 
   /* Types for Logging */
@@ -1892,6 +1983,1014 @@ export namespace Prisma {
 
 
   /**
+   * Model BellState
+   */
+
+  export type AggregateBellState = {
+    _count: BellStateCountAggregateOutputType | null
+    _avg: BellStateAvgAggregateOutputType | null
+    _sum: BellStateSumAggregateOutputType | null
+    _min: BellStateMinAggregateOutputType | null
+    _max: BellStateMaxAggregateOutputType | null
+  }
+
+  export type BellStateAvgAggregateOutputType = {
+    id: number | null
+  }
+
+  export type BellStateSumAggregateOutputType = {
+    id: number | null
+  }
+
+  export type BellStateMinAggregateOutputType = {
+    id: number | null
+    active: boolean | null
+    updatedAt: Date | null
+  }
+
+  export type BellStateMaxAggregateOutputType = {
+    id: number | null
+    active: boolean | null
+    updatedAt: Date | null
+  }
+
+  export type BellStateCountAggregateOutputType = {
+    id: number
+    active: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type BellStateAvgAggregateInputType = {
+    id?: true
+  }
+
+  export type BellStateSumAggregateInputType = {
+    id?: true
+  }
+
+  export type BellStateMinAggregateInputType = {
+    id?: true
+    active?: true
+    updatedAt?: true
+  }
+
+  export type BellStateMaxAggregateInputType = {
+    id?: true
+    active?: true
+    updatedAt?: true
+  }
+
+  export type BellStateCountAggregateInputType = {
+    id?: true
+    active?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type BellStateAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BellState to aggregate.
+     */
+    where?: BellStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BellStates to fetch.
+     */
+    orderBy?: BellStateOrderByWithRelationInput | BellStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BellStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BellStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BellStates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned BellStates
+    **/
+    _count?: true | BellStateCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: BellStateAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: BellStateSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BellStateMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BellStateMaxAggregateInputType
+  }
+
+  export type GetBellStateAggregateType<T extends BellStateAggregateArgs> = {
+        [P in keyof T & keyof AggregateBellState]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBellState[P]>
+      : GetScalarType<T[P], AggregateBellState[P]>
+  }
+
+
+
+
+  export type BellStateGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BellStateWhereInput
+    orderBy?: BellStateOrderByWithAggregationInput | BellStateOrderByWithAggregationInput[]
+    by: BellStateScalarFieldEnum[] | BellStateScalarFieldEnum
+    having?: BellStateScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BellStateCountAggregateInputType | true
+    _avg?: BellStateAvgAggregateInputType
+    _sum?: BellStateSumAggregateInputType
+    _min?: BellStateMinAggregateInputType
+    _max?: BellStateMaxAggregateInputType
+  }
+
+  export type BellStateGroupByOutputType = {
+    id: number
+    active: boolean
+    updatedAt: Date
+    _count: BellStateCountAggregateOutputType | null
+    _avg: BellStateAvgAggregateOutputType | null
+    _sum: BellStateSumAggregateOutputType | null
+    _min: BellStateMinAggregateOutputType | null
+    _max: BellStateMaxAggregateOutputType | null
+  }
+
+  type GetBellStateGroupByPayload<T extends BellStateGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BellStateGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BellStateGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BellStateGroupByOutputType[P]>
+            : GetScalarType<T[P], BellStateGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BellStateSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    active?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["bellState"]>
+
+  export type BellStateSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    active?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["bellState"]>
+
+  export type BellStateSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    active?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["bellState"]>
+
+  export type BellStateSelectScalar = {
+    id?: boolean
+    active?: boolean
+    updatedAt?: boolean
+  }
+
+  export type BellStateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "active" | "updatedAt", ExtArgs["result"]["bellState"]>
+
+  export type $BellStatePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "BellState"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      active: boolean
+      updatedAt: Date
+    }, ExtArgs["result"]["bellState"]>
+    composites: {}
+  }
+
+  type BellStateGetPayload<S extends boolean | null | undefined | BellStateDefaultArgs> = $Result.GetResult<Prisma.$BellStatePayload, S>
+
+  type BellStateCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<BellStateFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: BellStateCountAggregateInputType | true
+    }
+
+  export interface BellStateDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BellState'], meta: { name: 'BellState' } }
+    /**
+     * Find zero or one BellState that matches the filter.
+     * @param {BellStateFindUniqueArgs} args - Arguments to find a BellState
+     * @example
+     * // Get one BellState
+     * const bellState = await prisma.bellState.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BellStateFindUniqueArgs>(args: SelectSubset<T, BellStateFindUniqueArgs<ExtArgs>>): Prisma__BellStateClient<$Result.GetResult<Prisma.$BellStatePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one BellState that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {BellStateFindUniqueOrThrowArgs} args - Arguments to find a BellState
+     * @example
+     * // Get one BellState
+     * const bellState = await prisma.bellState.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BellStateFindUniqueOrThrowArgs>(args: SelectSubset<T, BellStateFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BellStateClient<$Result.GetResult<Prisma.$BellStatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BellState that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BellStateFindFirstArgs} args - Arguments to find a BellState
+     * @example
+     * // Get one BellState
+     * const bellState = await prisma.bellState.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BellStateFindFirstArgs>(args?: SelectSubset<T, BellStateFindFirstArgs<ExtArgs>>): Prisma__BellStateClient<$Result.GetResult<Prisma.$BellStatePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BellState that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BellStateFindFirstOrThrowArgs} args - Arguments to find a BellState
+     * @example
+     * // Get one BellState
+     * const bellState = await prisma.bellState.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BellStateFindFirstOrThrowArgs>(args?: SelectSubset<T, BellStateFindFirstOrThrowArgs<ExtArgs>>): Prisma__BellStateClient<$Result.GetResult<Prisma.$BellStatePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more BellStates that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BellStateFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all BellStates
+     * const bellStates = await prisma.bellState.findMany()
+     * 
+     * // Get first 10 BellStates
+     * const bellStates = await prisma.bellState.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const bellStateWithIdOnly = await prisma.bellState.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends BellStateFindManyArgs>(args?: SelectSubset<T, BellStateFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BellStatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a BellState.
+     * @param {BellStateCreateArgs} args - Arguments to create a BellState.
+     * @example
+     * // Create one BellState
+     * const BellState = await prisma.bellState.create({
+     *   data: {
+     *     // ... data to create a BellState
+     *   }
+     * })
+     * 
+     */
+    create<T extends BellStateCreateArgs>(args: SelectSubset<T, BellStateCreateArgs<ExtArgs>>): Prisma__BellStateClient<$Result.GetResult<Prisma.$BellStatePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many BellStates.
+     * @param {BellStateCreateManyArgs} args - Arguments to create many BellStates.
+     * @example
+     * // Create many BellStates
+     * const bellState = await prisma.bellState.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BellStateCreateManyArgs>(args?: SelectSubset<T, BellStateCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many BellStates and returns the data saved in the database.
+     * @param {BellStateCreateManyAndReturnArgs} args - Arguments to create many BellStates.
+     * @example
+     * // Create many BellStates
+     * const bellState = await prisma.bellState.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many BellStates and only return the `id`
+     * const bellStateWithIdOnly = await prisma.bellState.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BellStateCreateManyAndReturnArgs>(args?: SelectSubset<T, BellStateCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BellStatePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a BellState.
+     * @param {BellStateDeleteArgs} args - Arguments to delete one BellState.
+     * @example
+     * // Delete one BellState
+     * const BellState = await prisma.bellState.delete({
+     *   where: {
+     *     // ... filter to delete one BellState
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BellStateDeleteArgs>(args: SelectSubset<T, BellStateDeleteArgs<ExtArgs>>): Prisma__BellStateClient<$Result.GetResult<Prisma.$BellStatePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one BellState.
+     * @param {BellStateUpdateArgs} args - Arguments to update one BellState.
+     * @example
+     * // Update one BellState
+     * const bellState = await prisma.bellState.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BellStateUpdateArgs>(args: SelectSubset<T, BellStateUpdateArgs<ExtArgs>>): Prisma__BellStateClient<$Result.GetResult<Prisma.$BellStatePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more BellStates.
+     * @param {BellStateDeleteManyArgs} args - Arguments to filter BellStates to delete.
+     * @example
+     * // Delete a few BellStates
+     * const { count } = await prisma.bellState.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BellStateDeleteManyArgs>(args?: SelectSubset<T, BellStateDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BellStates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BellStateUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many BellStates
+     * const bellState = await prisma.bellState.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BellStateUpdateManyArgs>(args: SelectSubset<T, BellStateUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BellStates and returns the data updated in the database.
+     * @param {BellStateUpdateManyAndReturnArgs} args - Arguments to update many BellStates.
+     * @example
+     * // Update many BellStates
+     * const bellState = await prisma.bellState.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more BellStates and only return the `id`
+     * const bellStateWithIdOnly = await prisma.bellState.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends BellStateUpdateManyAndReturnArgs>(args: SelectSubset<T, BellStateUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BellStatePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one BellState.
+     * @param {BellStateUpsertArgs} args - Arguments to update or create a BellState.
+     * @example
+     * // Update or create a BellState
+     * const bellState = await prisma.bellState.upsert({
+     *   create: {
+     *     // ... data to create a BellState
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the BellState we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BellStateUpsertArgs>(args: SelectSubset<T, BellStateUpsertArgs<ExtArgs>>): Prisma__BellStateClient<$Result.GetResult<Prisma.$BellStatePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of BellStates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BellStateCountArgs} args - Arguments to filter BellStates to count.
+     * @example
+     * // Count the number of BellStates
+     * const count = await prisma.bellState.count({
+     *   where: {
+     *     // ... the filter for the BellStates we want to count
+     *   }
+     * })
+    **/
+    count<T extends BellStateCountArgs>(
+      args?: Subset<T, BellStateCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BellStateCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a BellState.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BellStateAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BellStateAggregateArgs>(args: Subset<T, BellStateAggregateArgs>): Prisma.PrismaPromise<GetBellStateAggregateType<T>>
+
+    /**
+     * Group by BellState.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BellStateGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BellStateGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BellStateGroupByArgs['orderBy'] }
+        : { orderBy?: BellStateGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BellStateGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBellStateGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the BellState model
+   */
+  readonly fields: BellStateFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for BellState.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BellStateClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the BellState model
+   */
+  interface BellStateFieldRefs {
+    readonly id: FieldRef<"BellState", 'Int'>
+    readonly active: FieldRef<"BellState", 'Boolean'>
+    readonly updatedAt: FieldRef<"BellState", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * BellState findUnique
+   */
+  export type BellStateFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BellState
+     */
+    select?: BellStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BellState
+     */
+    omit?: BellStateOmit<ExtArgs> | null
+    /**
+     * Filter, which BellState to fetch.
+     */
+    where: BellStateWhereUniqueInput
+  }
+
+  /**
+   * BellState findUniqueOrThrow
+   */
+  export type BellStateFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BellState
+     */
+    select?: BellStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BellState
+     */
+    omit?: BellStateOmit<ExtArgs> | null
+    /**
+     * Filter, which BellState to fetch.
+     */
+    where: BellStateWhereUniqueInput
+  }
+
+  /**
+   * BellState findFirst
+   */
+  export type BellStateFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BellState
+     */
+    select?: BellStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BellState
+     */
+    omit?: BellStateOmit<ExtArgs> | null
+    /**
+     * Filter, which BellState to fetch.
+     */
+    where?: BellStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BellStates to fetch.
+     */
+    orderBy?: BellStateOrderByWithRelationInput | BellStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BellStates.
+     */
+    cursor?: BellStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BellStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BellStates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BellStates.
+     */
+    distinct?: BellStateScalarFieldEnum | BellStateScalarFieldEnum[]
+  }
+
+  /**
+   * BellState findFirstOrThrow
+   */
+  export type BellStateFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BellState
+     */
+    select?: BellStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BellState
+     */
+    omit?: BellStateOmit<ExtArgs> | null
+    /**
+     * Filter, which BellState to fetch.
+     */
+    where?: BellStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BellStates to fetch.
+     */
+    orderBy?: BellStateOrderByWithRelationInput | BellStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BellStates.
+     */
+    cursor?: BellStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BellStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BellStates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BellStates.
+     */
+    distinct?: BellStateScalarFieldEnum | BellStateScalarFieldEnum[]
+  }
+
+  /**
+   * BellState findMany
+   */
+  export type BellStateFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BellState
+     */
+    select?: BellStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BellState
+     */
+    omit?: BellStateOmit<ExtArgs> | null
+    /**
+     * Filter, which BellStates to fetch.
+     */
+    where?: BellStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BellStates to fetch.
+     */
+    orderBy?: BellStateOrderByWithRelationInput | BellStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing BellStates.
+     */
+    cursor?: BellStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BellStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BellStates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BellStates.
+     */
+    distinct?: BellStateScalarFieldEnum | BellStateScalarFieldEnum[]
+  }
+
+  /**
+   * BellState create
+   */
+  export type BellStateCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BellState
+     */
+    select?: BellStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BellState
+     */
+    omit?: BellStateOmit<ExtArgs> | null
+    /**
+     * The data needed to create a BellState.
+     */
+    data: XOR<BellStateCreateInput, BellStateUncheckedCreateInput>
+  }
+
+  /**
+   * BellState createMany
+   */
+  export type BellStateCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many BellStates.
+     */
+    data: BellStateCreateManyInput | BellStateCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * BellState createManyAndReturn
+   */
+  export type BellStateCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BellState
+     */
+    select?: BellStateSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BellState
+     */
+    omit?: BellStateOmit<ExtArgs> | null
+    /**
+     * The data used to create many BellStates.
+     */
+    data: BellStateCreateManyInput | BellStateCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * BellState update
+   */
+  export type BellStateUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BellState
+     */
+    select?: BellStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BellState
+     */
+    omit?: BellStateOmit<ExtArgs> | null
+    /**
+     * The data needed to update a BellState.
+     */
+    data: XOR<BellStateUpdateInput, BellStateUncheckedUpdateInput>
+    /**
+     * Choose, which BellState to update.
+     */
+    where: BellStateWhereUniqueInput
+  }
+
+  /**
+   * BellState updateMany
+   */
+  export type BellStateUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update BellStates.
+     */
+    data: XOR<BellStateUpdateManyMutationInput, BellStateUncheckedUpdateManyInput>
+    /**
+     * Filter which BellStates to update
+     */
+    where?: BellStateWhereInput
+    /**
+     * Limit how many BellStates to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * BellState updateManyAndReturn
+   */
+  export type BellStateUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BellState
+     */
+    select?: BellStateSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BellState
+     */
+    omit?: BellStateOmit<ExtArgs> | null
+    /**
+     * The data used to update BellStates.
+     */
+    data: XOR<BellStateUpdateManyMutationInput, BellStateUncheckedUpdateManyInput>
+    /**
+     * Filter which BellStates to update
+     */
+    where?: BellStateWhereInput
+    /**
+     * Limit how many BellStates to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * BellState upsert
+   */
+  export type BellStateUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BellState
+     */
+    select?: BellStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BellState
+     */
+    omit?: BellStateOmit<ExtArgs> | null
+    /**
+     * The filter to search for the BellState to update in case it exists.
+     */
+    where: BellStateWhereUniqueInput
+    /**
+     * In case the BellState found by the `where` argument doesn't exist, create a new BellState with this data.
+     */
+    create: XOR<BellStateCreateInput, BellStateUncheckedCreateInput>
+    /**
+     * In case the BellState was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BellStateUpdateInput, BellStateUncheckedUpdateInput>
+  }
+
+  /**
+   * BellState delete
+   */
+  export type BellStateDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BellState
+     */
+    select?: BellStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BellState
+     */
+    omit?: BellStateOmit<ExtArgs> | null
+    /**
+     * Filter which BellState to delete.
+     */
+    where: BellStateWhereUniqueInput
+  }
+
+  /**
+   * BellState deleteMany
+   */
+  export type BellStateDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BellStates to delete
+     */
+    where?: BellStateWhereInput
+    /**
+     * Limit how many BellStates to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * BellState without action
+   */
+  export type BellStateDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BellState
+     */
+    select?: BellStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BellState
+     */
+    omit?: BellStateOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -1913,6 +3012,15 @@ export namespace Prisma {
   };
 
   export type SensorReadingScalarFieldEnum = (typeof SensorReadingScalarFieldEnum)[keyof typeof SensorReadingScalarFieldEnum]
+
+
+  export const BellStateScalarFieldEnum: {
+    id: 'id',
+    active: 'active',
+    updatedAt: 'updatedAt'
+  };
+
+  export type BellStateScalarFieldEnum = (typeof BellStateScalarFieldEnum)[keyof typeof BellStateScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -1990,6 +3098,13 @@ export namespace Prisma {
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
     
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
   /**
    * Deep Input Types
    */
@@ -2044,6 +3159,50 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"SensorReading"> | Date | string
   }
 
+  export type BellStateWhereInput = {
+    AND?: BellStateWhereInput | BellStateWhereInput[]
+    OR?: BellStateWhereInput[]
+    NOT?: BellStateWhereInput | BellStateWhereInput[]
+    id?: IntFilter<"BellState"> | number
+    active?: BoolFilter<"BellState"> | boolean
+    updatedAt?: DateTimeFilter<"BellState"> | Date | string
+  }
+
+  export type BellStateOrderByWithRelationInput = {
+    id?: SortOrder
+    active?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BellStateWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: BellStateWhereInput | BellStateWhereInput[]
+    OR?: BellStateWhereInput[]
+    NOT?: BellStateWhereInput | BellStateWhereInput[]
+    active?: BoolFilter<"BellState"> | boolean
+    updatedAt?: DateTimeFilter<"BellState"> | Date | string
+  }, "id">
+
+  export type BellStateOrderByWithAggregationInput = {
+    id?: SortOrder
+    active?: SortOrder
+    updatedAt?: SortOrder
+    _count?: BellStateCountOrderByAggregateInput
+    _avg?: BellStateAvgOrderByAggregateInput
+    _max?: BellStateMaxOrderByAggregateInput
+    _min?: BellStateMinOrderByAggregateInput
+    _sum?: BellStateSumOrderByAggregateInput
+  }
+
+  export type BellStateScalarWhereWithAggregatesInput = {
+    AND?: BellStateScalarWhereWithAggregatesInput | BellStateScalarWhereWithAggregatesInput[]
+    OR?: BellStateScalarWhereWithAggregatesInput[]
+    NOT?: BellStateScalarWhereWithAggregatesInput | BellStateScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"BellState"> | number
+    active?: BoolWithAggregatesFilter<"BellState"> | boolean
+    updatedAt?: DateTimeWithAggregatesFilter<"BellState"> | Date | string
+  }
+
   export type SensorReadingCreateInput = {
     distance: number
     unit?: string
@@ -2088,6 +3247,48 @@ export namespace Prisma {
     distance?: FloatFieldUpdateOperationsInput | number
     unit?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BellStateCreateInput = {
+    id?: number
+    active?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type BellStateUncheckedCreateInput = {
+    id?: number
+    active?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type BellStateUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    active?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BellStateUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    active?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BellStateCreateManyInput = {
+    id?: number
+    active?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type BellStateUpdateManyMutationInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    active?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BellStateUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    active?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -2233,6 +3434,45 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type BellStateCountOrderByAggregateInput = {
+    id?: SortOrder
+    active?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BellStateAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type BellStateMaxOrderByAggregateInput = {
+    id?: SortOrder
+    active?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BellStateMinOrderByAggregateInput = {
+    id?: SortOrder
+    active?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BellStateSumOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type FloatFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -2255,6 +3495,10 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -2365,6 +3609,19 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
 

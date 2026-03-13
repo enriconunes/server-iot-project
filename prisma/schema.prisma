@@ -15,3 +15,11 @@ model SensorReading {
 
   @@map("sensor_readings")
 }
+
+model BellState {
+  id        Int      @id @default(1)
+  active    Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+
+  @@map("bell_state")
+}

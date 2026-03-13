@@ -127,6 +127,12 @@ exports.Prisma.SensorReadingScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.BellStateScalarFieldEnum = {
+  id: 'id',
+  active: 'active',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -139,7 +145,8 @@ exports.Prisma.QueryMode = {
 
 
 exports.Prisma.ModelName = {
-  SensorReading: 'SensorReading'
+  SensorReading: 'SensorReading',
+  BellState: 'BellState'
 };
 
 /**
