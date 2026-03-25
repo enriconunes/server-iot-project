@@ -1,0 +1,16 @@
+[project]
+name = "radar-sensor"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "paho-mqtt>=2.0",
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+hardware = ["gpiozero", "lgpio"]
+dev = ["pytest"]
+
+[project.scripts]
+sensor-rpi = "sensor.main_rpi:main"
+mqtt-worker = "sensor.mqtt_worker:main"

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Radar Sensor Simulator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Radar HC-SR04 Simulator</h1>
+  <canvas id="radar-canvas" width="600" height="600"></canvas>
+  <div class="hud">
+    <div>Angle: <span id="hud-angle">0°</span></div>
+    <div>Distance: <span id="hud-distance">--</span></div>
+    <div>Hits: <span id="hud-hits">0</span></div>
+  </div>
+  <div id="mqtt-status" class="status">MQTT: disconnected</div>
+  <script src="https://unpkg.com/mqtt@5/dist/mqtt.min.js"></script>
+  <script src="simulator.js"></script>
+</body>
+</html>
