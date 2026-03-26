@@ -38,13 +38,3 @@ class HttpPublisher:
         except Exception as e:
             return None, f"Unexpected error: {e}"
 
-    def toggle_bell(self) -> tuple:
-        try:
-            resp = requests.post(
-                f"{self.api_base}/bell",
-                headers=self._headers(),
-                timeout=self.timeout,
-            )
-            return resp.status_code, resp.json() if resp.content else {}
-        except Exception as e:
-            return None, f"Error: {e}"

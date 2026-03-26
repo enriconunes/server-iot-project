@@ -124,18 +124,3 @@
   }
 }
 
-@keyframes bell-ring {
-  0%   { transform: rotate(0deg); }
-  10%  { transform: rotate(18deg); }
-  25%  { transform: rotate(-16deg); }
-  40%  { transform: rotate(12deg); }
-  55%  { transform: rotate(-10deg); }
-  70%  { transform: rotate(6deg); }
-  85%  { transform: rotate(-4deg); }
-  100% { transform: rotate(0deg); }
-}
-
-.animate-bell-ring {
-  animation: bell-ring 0.8s ease-in-out infinite;
-  transform-origin: top center;
-}

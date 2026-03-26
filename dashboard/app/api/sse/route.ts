@@ -38,17 +38,6 @@ export async function GET(request: NextRequest) {
             lastId = reading.id;
           }
 
-          // Also send bell state periodically
-          const { rows: bellRows } = await pool.query(
-            `SELECT active, updated_at AS "updatedAt" FROM bell_state WHERE id = 1`
-          );
-          if (bellRows.length > 0) {
-            controller.enqueue(
-              encoder.encode(
-                `event: bell\ndata: ${JSON.stringify(bellRows[0])}\n\n`
-              )
-            );
-          }
         } catch {
           // DB error — skip this tick
         }

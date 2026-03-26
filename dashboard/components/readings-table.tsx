@@ -66,6 +66,7 @@ export function ReadingsTable({ readings, isLoading }: ReadingsTableProps) {
           <TableRow className="border-border/50 hover:bg-transparent">
             <TableHead className="text-muted-foreground font-medium">ID</TableHead>
             <TableHead className="text-muted-foreground font-medium">Distância</TableHead>
+            <TableHead className="text-muted-foreground font-medium">Ângulo</TableHead>
             <TableHead className="text-muted-foreground font-medium">Unidade</TableHead>
             <TableHead className="text-muted-foreground font-medium text-right">Data/Hora</TableHead>
           </TableRow>
@@ -86,6 +87,9 @@ export function ReadingsTable({ readings, isLoading }: ReadingsTableProps) {
                 <span className={`font-bold text-lg ${getDistanceColor(reading.distance)}`}>
                   {reading.distance.toFixed(1)}
                 </span>
+              </TableCell>
+              <TableCell className="font-mono text-muted-foreground text-sm">
+                {reading.angle.toFixed(1)}°
               </TableCell>
               <TableCell>
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">

@@ -26,12 +26,13 @@ export async function POST(request: NextRequest) {
     [id, distance, angle ?? 0, unit ?? "cm"]
   );
 
-  // Sino automatico: liga se < 20cm, desliga se >= 20cm
-  const shouldRing = distance < 20;
+  const reading = rows[0];
+  const ts = new Date(reading.createdAt).toLocaleString("pt-PT", { timeZone: "Europe/Lisbon" });
+  const smsMessage = `Radar IoT — Deteção em ${ts} | Distância: ${reading.distance.toFixed(1)}cm | Ângulo: ${reading.angle.toFixed(1)}°`;
   await pool.query(
-    `UPDATE bell_state SET active = $1, updated_at = NOW() WHERE id = 1 AND active != $1`,
-    [shouldRing]
+    `INSERT INTO sms_log (id, reading_id, message, status) VALUES ($1, $2, $3, 'pending')`,
+    [uuidv7(), reading.id, smsMessage]
   );
 
-  return Response.json(rows[0], { status: 201 });
+  return Response.json(reading, { status: 201 });
 }

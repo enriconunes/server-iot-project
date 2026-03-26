@@ -3,31 +3,19 @@ import { ChevronLeft, ChevronRight, Sun, Moon } from 'lucide-react'
 import { useTheme } from './ThemeContext'
 import { SlideTitle } from './slides/SlideTitle'
 import { SlideOverview } from './slides/SlideOverview'
-import { SlideTechnologies } from './slides/SlideTechnologies'
+import { SlideStateOfArt } from './slides/SlideStateOfArt'
+import { SlideProblems } from './slides/SlideProblems'
+import { SlideSoftwareEng } from './slides/SlideSoftwareEng'
 import { SlideArchitecture } from './slides/SlideArchitecture'
-import { SlideDataFlow } from './slides/SlideDataFlow'
-import { SlideSensor } from './slides/SlideSensor'
-import { SlideDocker } from './slides/SlideDocker'
-import { SlideDashboard } from './slides/SlideDashboard'
-import { SlideAPI } from './slides/SlideAPI'
-import { SlideDatabase } from './slides/SlideDatabase'
-import { SlideMQTT } from './slides/SlideMQTT'
-import { SlideBell } from './slides/SlideBell'
 import { SlideEnd } from './slides/SlideEnd'
 
 const slides = [
   SlideTitle,
   SlideOverview,
-  SlideTechnologies,
+  SlideStateOfArt,
+  SlideProblems,
+  SlideSoftwareEng,
   SlideArchitecture,
-  SlideDataFlow,
-  SlideSensor,
-  SlideDocker,
-  SlideDashboard,
-  SlideAPI,
-  SlideDatabase,
-  SlideMQTT,
-  SlideBell,
   SlideEnd,
 ]
 
