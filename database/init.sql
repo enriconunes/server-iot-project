@@ -1,0 +1,17 @@
+CREATE TABLE IF NOT EXISTS sensor_readings (
+  id         UUID PRIMARY KEY,
+  distance   DOUBLE PRECISION NOT NULL,
+  angle      DOUBLE PRECISION NOT NULL DEFAULT 0,
+  unit       VARCHAR(10) NOT NULL DEFAULT 'cm',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS bell_state (
+  id         INTEGER PRIMARY KEY DEFAULT 1,
+  active     BOOLEAN NOT NULL DEFAULT FALSE,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Seed bell state
+INSERT INTO bell_state (id, active) VALUES (1, false)
+ON CONFLICT (id) DO NOTHING;
