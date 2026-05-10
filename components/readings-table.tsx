@@ -12,7 +12,9 @@ import { Radio, Activity } from "lucide-react"
 
 interface Reading {
   id: number
+  sensor: number
   distance: number
+  angle: number
   unit: string
   createdAt: string
 }
@@ -20,6 +22,13 @@ interface Reading {
 interface ReadingsTableProps {
   readings: Reading[]
   isLoading: boolean
+}
+
+const SENSOR_BADGE: Record<number, string> = {
+  1: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  2: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+  3: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  4: "bg-pink-500/10 text-pink-400 border-pink-500/20",
 }
 
 export function ReadingsTable({ readings, isLoading }: ReadingsTableProps) {
@@ -64,27 +73,34 @@ export function ReadingsTable({ readings, isLoading }: ReadingsTableProps) {
         <TableHeader>
           <TableRow className="border-border/50 hover:bg-transparent">
             <TableHead className="text-muted-foreground font-medium">ID</TableHead>
+            <TableHead className="text-muted-foreground font-medium">Sensor</TableHead>
             <TableHead className="text-muted-foreground font-medium">Distância</TableHead>
+            <TableHead className="text-muted-foreground font-medium">Ângulo</TableHead>
             <TableHead className="text-muted-foreground font-medium">Unidade</TableHead>
             <TableHead className="text-muted-foreground font-medium text-right">Data/Hora</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {readings.map((reading, index) => (
+          {readings.map((reading) => (
             <TableRow
               key={reading.id}
               className="border-border/30 hover:bg-primary/5 transition-colors"
-              style={{
-                animationDelay: `${index * 50}ms`,
-              }}
             >
               <TableCell className="font-mono text-muted-foreground">
                 #{reading.id.toString().padStart(4, "0")}
               </TableCell>
               <TableCell>
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${SENSOR_BADGE[reading.sensor] ?? "bg-muted text-muted-foreground border-border"}`}>
+                  S{reading.sensor}
+                </span>
+              </TableCell>
+              <TableCell>
                 <span className={`font-bold text-lg ${getDistanceColor(reading.distance)}`}>
                   {reading.distance.toFixed(1)}
                 </span>
+              </TableCell>
+              <TableCell className="font-mono text-sm text-muted-foreground">
+                {reading.angle.toFixed(1)}°
               </TableCell>
               <TableCell>
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">

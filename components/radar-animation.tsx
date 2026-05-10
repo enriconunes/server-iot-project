@@ -2,39 +2,89 @@
 
 import { useEffect, useRef } from "react"
 
-export function RadarAnimation() {
+export interface RadarReading {
+  id: number
+  sensor: number
+  distance: number
+  angle: number
+  createdAt: string
+}
+
+interface RadarAnimationProps {
+  readings?: RadarReading[]
+  maxDistance?: number
+  size?: number
+  /** Milliseconds over which a blip fades to nothing. 0 = no fade (persistent). */
+  fadeMs?: number
+  /** Show rotating sweep beam. */
+  showSweep?: boolean
+}
+
+// Distance → color gradient: closer = redder, farther = greener.
+function distanceColor(distance: number, maxDistance: number) {
+  const norm = Math.min(Math.max(distance / maxDistance, 0), 1)
+  const hue = norm * 140 // 0 = red, 140 ~ green
+  return `${hue}, 80%, 55%`
+}
+
+export function RadarAnimation({
+  readings = [],
+  maxDistance = 30,
+  size = 320,
+  fadeMs = 5000,
+  showSweep = true,
+}: RadarAnimationProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const readingsRef = useRef<RadarReading[]>(readings)
+  const propsRef = useRef({ maxDistance, fadeMs, showSweep })
+
+  useEffect(() => {
+    readingsRef.current = readings
+  }, [readings])
+
+  useEffect(() => {
+    propsRef.current = { maxDistance, fadeMs, showSweep }
+  }, [maxDistance, fadeMs, showSweep])
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
     let animationId: number
-    let angle = 0
+    let sweepAngle = 0
 
     const draw = () => {
-      const centerX = canvas.width / 2
-      const centerY = canvas.height / 2
-      const maxRadius = Math.min(centerX, centerY) - 10
+      const w = canvas.width
+      const h = canvas.height
+      const centerX = w / 2
+      const centerY = h / 2
+      const maxRadius = Math.min(centerX, centerY) - 12
+      const { maxDistance: maxD, fadeMs: fade, showSweep: sweep } = propsRef.current
 
-      // Clear canvas with fade effect
-      ctx.fillStyle = "rgba(18, 20, 30, 0.1)"
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      // Background fade — heavier when sweep is on so trails clear
+      ctx.fillStyle = sweep ? "rgba(18, 20, 30, 0.18)" : "rgba(18, 20, 30, 1)"
+      ctx.fillRect(0, 0, w, h)
 
-      // Draw circles
-      ctx.strokeStyle = "rgba(52, 211, 153, 0.2)"
+      // Range circles (with labels at cardinal radii)
+      ctx.strokeStyle = "rgba(52, 211, 153, 0.18)"
       ctx.lineWidth = 1
       for (let i = 1; i <= 4; i++) {
         ctx.beginPath()
         ctx.arc(centerX, centerY, (maxRadius / 4) * i, 0, Math.PI * 2)
         ctx.stroke()
       }
+      ctx.fillStyle = "rgba(148, 163, 184, 0.4)"
+      ctx.font = "9px ui-monospace, monospace"
+      ctx.textAlign = "left"
+      for (let i = 1; i <= 4; i++) {
+        const r = (maxRadius / 4) * i
+        ctx.fillText(`${((maxD / 4) * i).toFixed(0)}cm`, centerX + 4, centerY - r + 10)
+      }
 
-      // Draw cross lines
-      ctx.strokeStyle = "rgba(52, 211, 153, 0.15)"
+      // Quadrant lines
+      ctx.strokeStyle = "rgba(52, 211, 153, 0.12)"
       ctx.beginPath()
       ctx.moveTo(centerX, centerY - maxRadius)
       ctx.lineTo(centerX, centerY + maxRadius)
@@ -42,72 +92,90 @@ export function RadarAnimation() {
       ctx.lineTo(centerX + maxRadius, centerY)
       ctx.stroke()
 
-      // Draw sweep line (radar beam)
-      ctx.save()
-      ctx.strokeStyle = "rgba(52, 211, 153, 0.8)"
-      ctx.lineWidth = 2
-      ctx.beginPath()
-      ctx.moveTo(centerX, centerY)
-      const endX = centerX + Math.cos(angle) * maxRadius
-      const endY = centerY + Math.sin(angle) * maxRadius
-      ctx.lineTo(endX, endY)
-      ctx.stroke()
-      
-      // Draw sweep area with radial gradient
-      ctx.beginPath()
-      ctx.moveTo(centerX, centerY)
-      ctx.arc(centerX, centerY, maxRadius, angle - 0.5, angle)
-      ctx.closePath()
-      
-      const sweepGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, maxRadius)
-      sweepGradient.addColorStop(0, "rgba(52, 211, 153, 0.4)")
-      sweepGradient.addColorStop(0.5, "rgba(52, 211, 153, 0.2)")
-      sweepGradient.addColorStop(1, "rgba(52, 211, 153, 0.05)")
-      ctx.fillStyle = sweepGradient
-      ctx.fill()
-      ctx.restore()
+      // Quadrant labels
+      ctx.fillStyle = "rgba(148, 163, 184, 0.55)"
+      ctx.font = "10px ui-monospace, monospace"
+      ctx.textAlign = "center"
+      ctx.fillText("S1", centerX + maxRadius * 0.7, centerY - maxRadius * 0.7)
+      ctx.fillText("S2", centerX - maxRadius * 0.7, centerY - maxRadius * 0.7)
+      ctx.fillText("S3", centerX - maxRadius * 0.7, centerY + maxRadius * 0.7)
+      ctx.fillText("S4", centerX + maxRadius * 0.7, centerY + maxRadius * 0.7)
 
-      // Draw center dot
+      // Sweep
+      if (sweep) {
+        ctx.save()
+        ctx.beginPath()
+        ctx.moveTo(centerX, centerY)
+        ctx.arc(centerX, centerY, maxRadius, sweepAngle - 0.5, sweepAngle)
+        ctx.closePath()
+        const sweepGradient = ctx.createRadialGradient(
+          centerX,
+          centerY,
+          0,
+          centerX,
+          centerY,
+          maxRadius
+        )
+        sweepGradient.addColorStop(0, "rgba(52, 211, 153, 0.32)")
+        sweepGradient.addColorStop(1, "rgba(52, 211, 153, 0.02)")
+        ctx.fillStyle = sweepGradient
+        ctx.fill()
+        ctx.restore()
+      }
+
+      // Plot blips
+      const now = Date.now()
+      const data = readingsRef.current
+      for (const r of data) {
+        const ageMs = now - new Date(r.createdAt).getTime()
+        const opacity = fade > 0 ? Math.max(0, 1 - ageMs / fade) : 1
+        if (opacity <= 0) continue
+
+        const rad = (r.angle * Math.PI) / 180
+        const norm = Math.min(r.distance / maxD, 1)
+        const x = centerX + Math.cos(rad) * maxRadius * norm
+        const y = centerY + Math.sin(rad) * maxRadius * norm
+
+        const hsl = distanceColor(r.distance, maxD)
+
+        // Glow
+        ctx.fillStyle = `hsla(${hsl}, ${0.22 * opacity})`
+        ctx.beginPath()
+        ctx.arc(x, y, 11, 0, Math.PI * 2)
+        ctx.fill()
+
+        // Blip
+        ctx.fillStyle = `hsla(${hsl}, ${opacity})`
+        ctx.beginPath()
+        ctx.arc(x, y, 4, 0, Math.PI * 2)
+        ctx.fill()
+      }
+
+      // Center dot
       ctx.fillStyle = "rgba(52, 211, 153, 1)"
       ctx.beginPath()
       ctx.arc(centerX, centerY, 4, 0, Math.PI * 2)
       ctx.fill()
 
-      // Draw some blips
-      const blips = [
-        { r: 0.6, a: angle - 0.3 },
-        { r: 0.4, a: angle - 0.8 },
-        { r: 0.8, a: angle - 1.5 },
-      ]
-
-      blips.forEach((blip) => {
-        const x = centerX + Math.cos(blip.a) * maxRadius * blip.r
-        const y = centerY + Math.sin(blip.a) * maxRadius * blip.r
-        const opacity = Math.max(0, 1 - Math.abs(angle - blip.a) / 2)
-
-        ctx.fillStyle = `rgba(52, 211, 153, ${opacity})`
-        ctx.beginPath()
-        ctx.arc(x, y, 3, 0, Math.PI * 2)
-        ctx.fill()
-      })
-
-      angle += 0.02
-      if (angle > Math.PI * 2) angle = 0
+      if (sweep) {
+        sweepAngle += 0.025
+        if (sweepAngle > Math.PI * 2) sweepAngle = 0
+      }
 
       animationId = requestAnimationFrame(draw)
     }
 
     draw()
-
     return () => cancelAnimationFrame(animationId)
   }, [])
 
   return (
     <canvas
       ref={canvasRef}
-      width={200}
-      height={200}
-      className="opacity-60"
+      width={size}
+      height={size}
+      className="w-full h-auto max-w-full"
+      style={{ aspectRatio: "1 / 1" }}
     />
   )
 }

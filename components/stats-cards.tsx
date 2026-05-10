@@ -1,11 +1,13 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
-import { Activity, Gauge, Clock, Database } from "lucide-react"
+import { Database, Radar, Gauge, Compass } from "lucide-react"
 
 interface Reading {
   id: number
+  sensor: number
   distance: number
+  angle: number
   unit: string
   createdAt: string
 }
@@ -16,15 +18,16 @@ interface StatsCardsProps {
 
 export function StatsCards({ readings }: StatsCardsProps) {
   const totalReadings = readings.length
-  const avgDistance = readings.length > 0
-    ? readings.reduce((acc, r) => acc + r.distance, 0) / readings.length
-    : 0
-  const minDistance = readings.length > 0
-    ? Math.min(...readings.map((r) => r.distance))
-    : 0
-  const maxDistance = readings.length > 0
-    ? Math.max(...readings.map((r) => r.distance))
-    : 0
+
+  const activeSensors = new Set(readings.map((r) => r.sensor)).size
+
+  const avgDistance =
+    readings.length > 0
+      ? readings.reduce((acc, r) => acc + r.distance, 0) / readings.length
+      : 0
+
+  const minDistance =
+    readings.length > 0 ? Math.min(...readings.map((r) => r.distance)) : 0
 
   const stats = [
     {
@@ -34,21 +37,21 @@ export function StatsCards({ readings }: StatsCardsProps) {
       suffix: "",
     },
     {
+      label: "Sensores Ativos",
+      value: activeSensors,
+      icon: Radar,
+      suffix: "/ 4",
+    },
+    {
       label: "Distância Média",
       value: avgDistance.toFixed(1),
-      icon: Activity,
+      icon: Compass,
       suffix: "cm",
     },
     {
-      label: "Mínima",
+      label: "Mais Próximo",
       value: minDistance.toFixed(1),
       icon: Gauge,
-      suffix: "cm",
-    },
-    {
-      label: "Máxima",
-      value: maxDistance.toFixed(1),
-      icon: Clock,
       suffix: "cm",
     },
   ]

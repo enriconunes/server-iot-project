@@ -9,17 +9,12 @@ datasource db {
 
 model SensorReading {
   id        Int      @id @default(autoincrement())
+  sensor    Int
   distance  Float
+  angle     Float
   unit      String   @default("cm")
   createdAt DateTime @default(now())
 
+  @@index([sensor, createdAt])
   @@map("sensor_readings")
-}
-
-model BellState {
-  id        Int      @id @default(1)
-  active    Boolean  @default(false)
-  updatedAt DateTime @updatedAt
-
-  @@map("bell_state")
 }

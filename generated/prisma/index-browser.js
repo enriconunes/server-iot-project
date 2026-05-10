@@ -122,15 +122,11 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.SensorReadingScalarFieldEnum = {
   id: 'id',
+  sensor: 'sensor',
   distance: 'distance',
+  angle: 'angle',
   unit: 'unit',
   createdAt: 'createdAt'
-};
-
-exports.Prisma.BellStateScalarFieldEnum = {
-  id: 'id',
-  active: 'active',
-  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -145,8 +141,7 @@ exports.Prisma.QueryMode = {
 
 
 exports.Prisma.ModelName = {
-  SensorReading: 'SensorReading',
-  BellState: 'BellState'
+  SensorReading: 'SensorReading'
 };
 
 /**
