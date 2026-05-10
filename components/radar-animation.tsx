@@ -52,15 +52,31 @@ export function RadarAnimation({
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
+    const dpr = Math.min(window.devicePixelRatio || 1, 3)
+    let cssSize = size
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect()
+      const measured = Math.min(rect.width, rect.height) || size
+      cssSize = measured
+      canvas.width = Math.round(cssSize * dpr)
+      canvas.height = Math.round(cssSize * dpr)
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    }
+    resize()
+
+    const ro = new ResizeObserver(resize)
+    ro.observe(canvas)
+
     let animationId: number
     let sweepAngle = 0
 
     const draw = () => {
-      const w = canvas.width
-      const h = canvas.height
+      const w = cssSize
+      const h = cssSize
       const centerX = w / 2
       const centerY = h / 2
-      const maxRadius = Math.min(centerX, centerY) - 12
+      const maxRadius = Math.min(centerX, centerY) - 28
       const { maxDistance: maxD, fadeMs: fade, showSweep: sweep } = propsRef.current
 
       // Background fade — heavier when sweep is on so trails clear
@@ -75,13 +91,22 @@ export function RadarAnimation({
         ctx.arc(centerX, centerY, (maxRadius / 4) * i, 0, Math.PI * 2)
         ctx.stroke()
       }
-      ctx.fillStyle = "rgba(148, 163, 184, 0.4)"
-      ctx.font = "9px ui-monospace, monospace"
+      ctx.fillStyle = "rgba(203, 213, 225, 0.85)"
+      ctx.font = "bold 13px ui-monospace, monospace"
       ctx.textAlign = "left"
+      ctx.textBaseline = "middle"
       for (let i = 1; i <= 4; i++) {
         const r = (maxRadius / 4) * i
-        ctx.fillText(`${((maxD / 4) * i).toFixed(0)}cm`, centerX + 4, centerY - r + 10)
+        const label = `${((maxD / 4) * i).toFixed(0)} cm`
+        const tx = centerX + 6
+        const ty = centerY - r
+        const tw = ctx.measureText(label).width
+        ctx.fillStyle = "rgba(15, 23, 42, 0.7)"
+        ctx.fillRect(tx - 3, ty - 9, tw + 6, 18)
+        ctx.fillStyle = "rgba(226, 232, 240, 0.95)"
+        ctx.fillText(label, tx, ty)
       }
+      ctx.textBaseline = "alphabetic"
 
       // Quadrant lines
       ctx.strokeStyle = "rgba(52, 211, 153, 0.12)"
@@ -92,14 +117,17 @@ export function RadarAnimation({
       ctx.lineTo(centerX + maxRadius, centerY)
       ctx.stroke()
 
-      // Quadrant labels
-      ctx.fillStyle = "rgba(148, 163, 184, 0.55)"
-      ctx.font = "10px ui-monospace, monospace"
+      // Cardinal angle labels (canvas: 0° = right, +90° = down because Y is inverted)
+      ctx.fillStyle = "rgba(125, 211, 252, 0.95)"
+      ctx.font = "bold 13px ui-monospace, monospace"
       ctx.textAlign = "center"
-      ctx.fillText("S1", centerX + maxRadius * 0.7, centerY - maxRadius * 0.7)
-      ctx.fillText("S2", centerX - maxRadius * 0.7, centerY - maxRadius * 0.7)
-      ctx.fillText("S3", centerX - maxRadius * 0.7, centerY + maxRadius * 0.7)
-      ctx.fillText("S4", centerX + maxRadius * 0.7, centerY + maxRadius * 0.7)
+      ctx.textBaseline = "middle"
+      const off = 14
+      ctx.fillText("0°",   centerX + maxRadius + off, centerY)
+      ctx.fillText("90°",  centerX,                   centerY + maxRadius + off)
+      ctx.fillText("180°", centerX - maxRadius - off, centerY)
+      ctx.fillText("270°", centerX,                   centerY - maxRadius - off)
+      ctx.textBaseline = "alphabetic"
 
       // Sweep
       if (sweep) {
@@ -166,16 +194,21 @@ export function RadarAnimation({
     }
 
     draw()
-    return () => cancelAnimationFrame(animationId)
-  }, [])
+    return () => {
+      cancelAnimationFrame(animationId)
+      ro.disconnect()
+    }
+  }, [size])
 
   return (
     <canvas
       ref={canvasRef}
-      width={size}
-      height={size}
-      className="w-full h-auto max-w-full"
-      style={{ aspectRatio: "1 / 1" }}
+      style={{
+        width: "100%",
+        maxWidth: `${size}px`,
+        aspectRatio: "1 / 1",
+        display: "block",
+      }}
     />
   )
 }

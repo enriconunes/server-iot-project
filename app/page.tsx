@@ -6,6 +6,8 @@ import { ReadingsTable } from "@/components/readings-table"
 import { SearchControls } from "@/components/search-controls"
 import { StatsCards } from "@/components/stats-cards"
 import { RadarAnimation } from "@/components/radar-animation"
+import { PredictionRadar, computePrediction } from "@/components/prediction-radar"
+import { Sparkles } from "lucide-react"
 import {
   Select,
   SelectContent,
@@ -15,13 +17,21 @@ import {
 } from "@/components/ui/select"
 import { Radio, Wifi, Signal } from "lucide-react"
 
-const TIME_WINDOWS: { value: string; label: string; ms: number }[] = [
-  { value: "60000",    label: "Último minuto",    ms: 60_000 },
-  { value: "600000",   label: "Últimos 10 min",   ms: 600_000 },
-  { value: "1800000",  label: "Últimos 30 min",   ms: 1_800_000 },
-  { value: "3600000",  label: "Última hora",      ms: 3_600_000 },
-  { value: "86400000", label: "Último dia",       ms: 86_400_000 },
+const TIME_WINDOWS: { value: string; label: string }[] = [
+  { value: "60000",    label: "Último minuto"  },
+  { value: "600000",   label: "Últimos 10 min" },
+  { value: "1800000",  label: "Últimos 30 min" },
+  { value: "3600000",  label: "Última hora"    },
+  { value: "86400000", label: "Último dia"     },
+  { value: "all",      label: "Sempre"         },
 ]
+
+function inWindow(createdAt: string, windowValue: string, now: number): boolean {
+  if (windowValue === "all") return true
+  const ms = Number(windowValue)
+  if (!Number.isFinite(ms)) return true
+  return now - new Date(createdAt).getTime() <= ms
+}
 
 interface Reading {
   id: number
@@ -49,6 +59,10 @@ export default function DashboardPage() {
   const [autoRefresh, setAutoRefresh] = useState(false)
   const [refreshInterval, setRefreshInterval] = useState("2000")
   const [windowMs, setWindowMs] = useState("600000")
+  const [predWindowMs, setPredWindowMs] = useState("3600000")
+  const [liveFadeSec, setLiveFadeSec] = useState(5)
+  const [page, setPage] = useState(1)
+  const PAGE_SIZE = 15
 
   const apiHeaders = useMemo(
     () => ({ "x-api-key": process.env.NEXT_PUBLIC_API_KEY ?? "" }),
@@ -86,18 +100,49 @@ export default function DashboardPage() {
 
   const liveReadings = useMemo(() => {
     const now = Date.now()
-    return readings.filter(
-      (r) => now - new Date(r.createdAt).getTime() <= 5000
-    )
-  }, [readings])
-
-  const windowedReadings = useMemo(() => {
-    const now = Date.now()
-    const ms = Number(windowMs)
+    const ms = Math.max(liveFadeSec, 0) * 1000
     return readings.filter(
       (r) => now - new Date(r.createdAt).getTime() <= ms
     )
+  }, [readings, liveFadeSec])
+
+  const windowedReadings = useMemo(() => {
+    const now = Date.now()
+    return readings.filter((r) => inWindow(r.createdAt, windowMs, now))
   }, [readings, windowMs])
+
+  const predReadings = useMemo(() => {
+    const now = Date.now()
+    return readings.filter((r) => inWindow(r.createdAt, predWindowMs, now))
+  }, [readings, predWindowMs])
+
+  const PRED_SIGMA = 3
+  const PRED_HALF_LIFE_MS = 30 * 60 * 1000
+  const PRED_ANG_BINS = 72
+  const PRED_RAD_BINS = 12
+
+  const predResult = useMemo(
+    () =>
+      computePrediction(predReadings, {
+        maxDistance: 30,
+        sigma: PRED_SIGMA,
+        halfLifeMs: PRED_HALF_LIFE_MS,
+        angleBins: PRED_ANG_BINS,
+        radialBins: PRED_RAD_BINS,
+      }).result,
+    [predReadings]
+  )
+
+  const totalPages = Math.max(1, Math.ceil(readings.length / PAGE_SIZE))
+  const safePage = Math.min(page, totalPages)
+  const pagedReadings = useMemo(
+    () => readings.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE),
+    [readings, safePage]
+  )
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages)
+  }, [totalPages, page])
 
   const latestPerSensor = useMemo(() => {
     const map = new Map<number, Reading>()
@@ -172,19 +217,33 @@ export default function DashboardPage() {
         <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
           <Card className="bg-card border-border/50">
             <CardHeader className="border-b border-border/30">
-              <CardTitle className="text-base font-semibold flex items-center gap-2">
-                <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                Visualização ao Vivo
-                <span className="ml-auto text-xs font-normal text-muted-foreground">
-                  fade 5s · alcance 30cm
-                </span>
-              </CardTitle>
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                  Visualização ao Vivo
+                </CardTitle>
+                <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                  fade
+                  <input
+                    type="number"
+                    min={1}
+                    max={120}
+                    step={1}
+                    value={liveFadeSec}
+                    onChange={(e) =>
+                      setLiveFadeSec(Math.max(1, Math.min(120, Number(e.target.value) || 1)))
+                    }
+                    className="h-8 w-16 rounded-md border border-border/50 bg-background px-2 text-xs font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
+                  <span>s</span>
+                </label>
+              </div>
             </CardHeader>
             <CardContent className="p-4 sm:p-6 flex items-center justify-center">
               <RadarAnimation
                 readings={liveReadings}
                 maxDistance={30}
-                fadeMs={5000}
+                fadeMs={liveFadeSec * 1000}
                 size={360}
               />
             </CardContent>
@@ -264,6 +323,167 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* Prediction section */}
+        <Card className="mb-8 bg-card border-border/50">
+          <CardHeader className="border-b border-border/30">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <CardTitle className="text-base font-semibold flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-yellow-300" />
+                Previsão — Onde um Próximo Objeto Tem Mais Chance de Aparecer
+              </CardTitle>
+              <Select value={predWindowMs} onValueChange={setPredWindowMs}>
+                <SelectTrigger className="h-8 w-[180px] text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {TIME_WINDOWS.map((w) => (
+                    <SelectItem key={w.value} value={w.value} className="text-xs">
+                      {w.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </CardHeader>
+          <CardContent className="p-4 sm:p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+              <div className="lg:col-span-3 flex flex-col items-center gap-2">
+                <PredictionRadar
+                  readings={predReadings}
+                  maxDistance={30}
+                  sigma={PRED_SIGMA}
+                  halfLifeMs={PRED_HALF_LIFE_MS}
+                  angleBins={PRED_ANG_BINS}
+                  radialBins={PRED_RAD_BINS}
+                  size={420}
+                />
+                <p className="text-[11px] text-muted-foreground text-center">
+                  Anel destacado = região com maior probabilidade prevista (top-3 marcados).
+                </p>
+              </div>
+
+              <div className="lg:col-span-2 flex flex-col gap-3">
+                <div className="rounded-lg border border-yellow-400/30 bg-yellow-500/5 p-4">
+                  <p className="text-xs text-yellow-300 uppercase tracking-widest mb-2 flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" /> Predição Mais Provável
+                  </p>
+                  {predResult.effectiveN > 0 ? (
+                    <>
+                      <p className="text-3xl font-bold text-yellow-300 tabular-nums">
+                        {(predResult.topProbability * 100).toFixed(1)}%
+                      </p>
+                      <p className="text-sm text-foreground mt-1 font-mono">
+                        ∠ {predResult.topAngleDeg.toFixed(1)}° · {predResult.topDistanceCm.toFixed(1)} cm
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">Sem dados na janela selecionada.</p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-lg border border-border/50 bg-background/40 p-4">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">
+                      Amostras (N)
+                    </p>
+                    <p className="text-2xl font-bold text-foreground tabular-nums">
+                      {predResult.effectiveN}
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-border/50 bg-background/40 p-4">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">
+                      Peso Total Σwᵢ
+                    </p>
+                    <p className="text-2xl font-bold text-foreground tabular-nums">
+                      {predResult.totalWeight.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="rounded-lg border border-border/50 bg-background/40 p-4 text-xs">
+                  <p className="text-muted-foreground uppercase tracking-widest mb-2 text-[10px]">
+                    Parâmetros
+                  </p>
+                  <ul className="space-y-1 font-mono text-foreground/80">
+                    <li>σ (banda espacial) = <span className="text-yellow-300">{PRED_SIGMA} cm</span></li>
+                    <li>t½ (meia-vida) = <span className="text-yellow-300">{PRED_HALF_LIFE_MS / 60000} min</span></li>
+                    <li>grade = {PRED_ANG_BINS} × {PRED_RAD_BINS} células</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Logic explanation (collapsible) */}
+            <details className="group mt-6 rounded-lg border border-border/50 bg-background/30 overflow-hidden">
+              <summary className="cursor-pointer select-none list-none p-4 text-sm font-semibold text-foreground flex items-center gap-2 hover:bg-background/50 transition-colors">
+                <Sparkles className="w-4 h-4 text-yellow-300" />
+                Como a previsão é calculada
+                <span className="ml-auto text-xs font-normal text-muted-foreground group-open:hidden">
+                  clique para expandir ▾
+                </span>
+                <span className="ml-auto text-xs font-normal text-muted-foreground hidden group-open:inline">
+                  clique para recolher ▴
+                </span>
+              </summary>
+              <div className="p-5 pt-2 text-sm leading-relaxed border-t border-border/30">
+              <p className="text-muted-foreground mb-3">
+                Aplicamos uma <strong className="text-foreground">Estimativa de Densidade por Kernel (KDE)</strong> Gaussiana 2D
+                sobre as detecções, ponderando cada amostra pela sua recência (decaimento exponencial).
+                A probabilidade é então normalizada sobre a grade polar (raio × ângulo).
+              </p>
+
+              <ol className="list-decimal list-inside space-y-2 text-muted-foreground">
+                <li>
+                  <strong className="text-foreground">Conversão para coordenadas cartesianas:</strong>{" "}
+                  cada leitura <code className="font-mono">(angle, distance)</code> vira um ponto{" "}
+                  <code className="font-mono">pᵢ = (dᵢ·cos θᵢ, dᵢ·sin θᵢ)</code>.
+                </li>
+                <li>
+                  <strong className="text-foreground">Peso por recência</strong> (decaimento exponencial com meia-vida t½):
+                  <div className="mt-1 ml-4 font-mono text-yellow-300">
+                    wᵢ = exp(−λ · Δtᵢ),  com λ = ln(2) / t½
+                  </div>
+                  <span className="block ml-4 text-xs">
+                    Isso significa que uma detecção de {PRED_HALF_LIFE_MS / 60000} min atrás contribui com metade do peso de uma detecção atual.
+                  </span>
+                </li>
+                <li>
+                  <strong className="text-foreground">Densidade Gaussiana</strong> avaliada no centro de cada célula{" "}
+                  <code className="font-mono">c</code> da grade:
+                  <div className="mt-1 ml-4 font-mono text-yellow-300">
+                    f(c) = Σᵢ wᵢ · exp(−‖c − pᵢ‖² / (2σ²))
+                  </div>
+                  <span className="block ml-4 text-xs">
+                    σ = {PRED_SIGMA} cm define o quão localizada é a influência de cada ponto.
+                  </span>
+                </li>
+                <li>
+                  <strong className="text-foreground">Normalização</strong> em uma distribuição de probabilidade discreta:
+                  <div className="mt-1 ml-4 font-mono text-yellow-300">
+                    P(c) = f(c) / Σ_c f(c),    com Σ_c P(c) = 1
+                  </div>
+                </li>
+                <li>
+                  <strong className="text-foreground">Predição</strong>: a célula com maior <code className="font-mono">P(c)</code>{" "}
+                  é onde um próximo objeto tem mais chance de aparecer.
+                  {predResult.effectiveN > 0 && (
+                    <div className="mt-1 ml-4 font-mono text-yellow-300">
+                      argmax<sub>c</sub> P(c) ≈ ({predResult.topAngleDeg.toFixed(1)}°,{" "}
+                      {predResult.topDistanceCm.toFixed(1)} cm) · P = {(predResult.topProbability * 100).toFixed(2)}%
+                    </div>
+                  )}
+                </li>
+              </ol>
+
+              <p className="text-xs text-muted-foreground/80 mt-4 italic">
+                Observação: trata-se de um modelo não-paramétrico simples — assume que o futuro segue a distribuição recente.
+                Não captura periodicidade nem trajetórias. Mais amostras (N maior) ⇒ predição mais estável.
+              </p>
+              </div>
+            </details>
+          </CardContent>
+        </Card>
+
         {/* Stats */}
         <div className="mb-8">
           <StatsCards readings={readings} />
@@ -283,8 +503,52 @@ export default function DashboardPage() {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <ReadingsTable readings={readings} isLoading={initialLoad} />
+            <ReadingsTable readings={pagedReadings} isLoading={initialLoad} />
           </CardContent>
+          {readings.length > PAGE_SIZE && (
+            <div className="flex items-center justify-between gap-3 px-4 py-3 border-t border-border/30 flex-wrap">
+              <span className="text-xs text-muted-foreground font-mono">
+                {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, readings.length)} de {readings.length}
+              </span>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setPage(1)}
+                  disabled={safePage === 1}
+                  className="h-8 px-2 rounded-md border border-border/50 text-xs hover:bg-primary/10 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  «
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={safePage === 1}
+                  className="h-8 px-3 rounded-md border border-border/50 text-xs hover:bg-primary/10 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Anterior
+                </button>
+                <span className="px-3 text-xs font-mono text-muted-foreground">
+                  {safePage} / {totalPages}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={safePage === totalPages}
+                  className="h-8 px-3 rounded-md border border-border/50 text-xs hover:bg-primary/10 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Próxima
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPage(totalPages)}
+                  disabled={safePage === totalPages}
+                  className="h-8 px-2 rounded-md border border-border/50 text-xs hover:bg-primary/10 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  »
+                </button>
+              </div>
+            </div>
+          )}
         </Card>
 
         {/* Footer legend */}
