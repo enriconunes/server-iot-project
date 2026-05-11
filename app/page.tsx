@@ -7,7 +7,14 @@ import { SearchControls } from "@/components/search-controls"
 import { StatsCards } from "@/components/stats-cards"
 import { RadarAnimation } from "@/components/radar-animation"
 import { PredictionRadar, computePrediction } from "@/components/prediction-radar"
-import { Sparkles } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
+import { Power, Sparkles } from "lucide-react"
+
+interface SensorConfig {
+  sensor: number
+  enabled: boolean
+  updatedAt: string
+}
 import {
   Select,
   SelectContent,
@@ -61,6 +68,8 @@ export default function DashboardPage() {
   const [windowMs, setWindowMs] = useState("600000")
   const [predWindowMs, setPredWindowMs] = useState("3600000")
   const [liveFadeSec, setLiveFadeSec] = useState(5)
+  const [sensorConfig, setSensorConfig] = useState<SensorConfig[]>([])
+  const [togglingSensor, setTogglingSensor] = useState<number | null>(null)
   const [page, setPage] = useState(1)
   const PAGE_SIZE = 15
 
@@ -90,6 +99,44 @@ export default function DashboardPage() {
   useEffect(() => {
     fetchReadings()
   }, [fetchReadings])
+
+  const fetchSensorConfig = useCallback(async () => {
+    try {
+      const res = await fetch("/api/sensors/config", { headers: apiHeaders })
+      if (res.ok) setSensorConfig(await res.json())
+    } catch (e) {
+      console.error("Erro ao buscar config:", e)
+    }
+  }, [apiHeaders])
+
+  useEffect(() => {
+    fetchSensorConfig()
+    const id = setInterval(fetchSensorConfig, 5000)
+    return () => clearInterval(id)
+  }, [fetchSensorConfig])
+
+  const toggleSensor = useCallback(
+    async (sensor: number, enabled: boolean) => {
+      setTogglingSensor(sensor)
+      setSensorConfig((prev) =>
+        prev.map((c) => (c.sensor === sensor ? { ...c, enabled } : c))
+      )
+      try {
+        const res = await fetch("/api/sensors/config", {
+          method: "PATCH",
+          headers: { ...apiHeaders, "Content-Type": "application/json" },
+          body: JSON.stringify({ sensor, enabled }),
+        })
+        if (!res.ok) await fetchSensorConfig()
+      } catch (e) {
+        console.error("Erro ao alternar sensor:", e)
+        await fetchSensorConfig()
+      } finally {
+        setTogglingSensor(null)
+      }
+    },
+    [apiHeaders, fetchSensorConfig]
+  )
 
   useEffect(() => {
     if (!autoRefresh) return
@@ -212,6 +259,51 @@ export default function DashboardPage() {
             onAutoRefreshToggle={() => setAutoRefresh((prev) => !prev)}
           />
         </div>
+
+        {/* Sensor toggles */}
+        <Card className="mb-8 bg-card border-border/50">
+          <CardHeader className="border-b border-border/30">
+            <CardTitle className="text-base font-semibold flex items-center gap-2">
+              <Power className="w-4 h-4 text-primary" />
+              Controle de Sensores
+              <span className="ml-auto text-xs font-normal text-muted-foreground">
+                ESP32 lê a cada 5s
+              </span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 sm:p-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              {SENSOR_IDS.map((id) => {
+                const cfg = sensorConfig.find((c) => c.sensor === id)
+                const enabled = cfg?.enabled ?? false
+                const tone = SENSOR_TONE[id]
+                return (
+                  <div
+                    key={id}
+                    className={`rounded-lg border p-4 transition-colors ${enabled ? tone.bg : "bg-background/40 border-border/50"}`}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-xs text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                          <span className={`w-1.5 h-1.5 rounded-full ${enabled ? tone.dot : "bg-muted-foreground"} ${enabled ? "animate-pulse" : ""}`} />
+                          Sensor {id}
+                        </p>
+                        <p className={`text-base font-bold mt-1 ${enabled ? tone.text : "text-muted-foreground"}`}>
+                          {enabled ? "Ativo" : "Desativado"}
+                        </p>
+                      </div>
+                      <Switch
+                        checked={enabled}
+                        disabled={togglingSensor === id}
+                        onCheckedChange={(v) => toggleSensor(id, v)}
+                      />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Radars */}
         <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -129,6 +129,12 @@ exports.Prisma.SensorReadingScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.SensorConfigScalarFieldEnum = {
+  sensor: 'sensor',
+  enabled: 'enabled',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -141,7 +147,8 @@ exports.Prisma.QueryMode = {
 
 
 exports.Prisma.ModelName = {
-  SensorReading: 'SensorReading'
+  SensorReading: 'SensorReading',
+  SensorConfig: 'SensorConfig'
 };
 
 /**

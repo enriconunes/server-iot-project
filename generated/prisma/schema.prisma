@@ -18,3 +18,11 @@ model SensorReading {
   @@index([sensor, createdAt])
   @@map("sensor_readings")
 }
+
+model SensorConfig {
+  sensor    Int      @id
+  enabled   Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+
+  @@map("sensor_config")
+}

@@ -42,6 +42,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Backend guard: reject readings from sensors marked as disabled
+  const config = await prisma.sensorConfig.findUnique({ where: { sensor } });
+  if (config && !config.enabled) {
+    return Response.json(
+      { error: `Sensor ${sensor} is disabled.` },
+      { status: 403 }
+    );
+  }
+
   const reading = await prisma.sensorReading.create({
     data: { sensor, distance, angle, unit: unit ?? "cm" },
   });

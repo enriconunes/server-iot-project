@@ -18,6 +18,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  * 
  */
 export type SensorReading = $Result.DefaultSelection<Prisma.$SensorReadingPayload>
+/**
+ * Model SensorConfig
+ * 
+ */
+export type SensorConfig = $Result.DefaultSelection<Prisma.$SensorConfigPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -149,6 +154,16 @@ export class PrismaClient<
     * ```
     */
   get sensorReading(): Prisma.SensorReadingDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.sensorConfig`: Exposes CRUD operations for the **SensorConfig** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SensorConfigs
+    * const sensorConfigs = await prisma.sensorConfig.findMany()
+    * ```
+    */
+  get sensorConfig(): Prisma.SensorConfigDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -583,7 +598,8 @@ export namespace Prisma {
 
 
   export const ModelName: {
-    SensorReading: 'SensorReading'
+    SensorReading: 'SensorReading',
+    SensorConfig: 'SensorConfig'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -599,7 +615,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "sensorReading"
+      modelProps: "sensorReading" | "sensorConfig"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -674,6 +690,80 @@ export namespace Prisma {
           count: {
             args: Prisma.SensorReadingCountArgs<ExtArgs>
             result: $Utils.Optional<SensorReadingCountAggregateOutputType> | number
+          }
+        }
+      }
+      SensorConfig: {
+        payload: Prisma.$SensorConfigPayload<ExtArgs>
+        fields: Prisma.SensorConfigFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SensorConfigFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SensorConfigPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SensorConfigFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SensorConfigPayload>
+          }
+          findFirst: {
+            args: Prisma.SensorConfigFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SensorConfigPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SensorConfigFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SensorConfigPayload>
+          }
+          findMany: {
+            args: Prisma.SensorConfigFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SensorConfigPayload>[]
+          }
+          create: {
+            args: Prisma.SensorConfigCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SensorConfigPayload>
+          }
+          createMany: {
+            args: Prisma.SensorConfigCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SensorConfigCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SensorConfigPayload>[]
+          }
+          delete: {
+            args: Prisma.SensorConfigDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SensorConfigPayload>
+          }
+          update: {
+            args: Prisma.SensorConfigUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SensorConfigPayload>
+          }
+          deleteMany: {
+            args: Prisma.SensorConfigDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SensorConfigUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SensorConfigUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SensorConfigPayload>[]
+          }
+          upsert: {
+            args: Prisma.SensorConfigUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SensorConfigPayload>
+          }
+          aggregate: {
+            args: Prisma.SensorConfigAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSensorConfig>
+          }
+          groupBy: {
+            args: Prisma.SensorConfigGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SensorConfigGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SensorConfigCountArgs<ExtArgs>
+            result: $Utils.Optional<SensorConfigCountAggregateOutputType> | number
           }
         }
       }
@@ -786,6 +876,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     sensorReading?: SensorReadingOmit
+    sensorConfig?: SensorConfigOmit
   }
 
   /* Types for Logging */
@@ -1926,6 +2017,1014 @@ export namespace Prisma {
 
 
   /**
+   * Model SensorConfig
+   */
+
+  export type AggregateSensorConfig = {
+    _count: SensorConfigCountAggregateOutputType | null
+    _avg: SensorConfigAvgAggregateOutputType | null
+    _sum: SensorConfigSumAggregateOutputType | null
+    _min: SensorConfigMinAggregateOutputType | null
+    _max: SensorConfigMaxAggregateOutputType | null
+  }
+
+  export type SensorConfigAvgAggregateOutputType = {
+    sensor: number | null
+  }
+
+  export type SensorConfigSumAggregateOutputType = {
+    sensor: number | null
+  }
+
+  export type SensorConfigMinAggregateOutputType = {
+    sensor: number | null
+    enabled: boolean | null
+    updatedAt: Date | null
+  }
+
+  export type SensorConfigMaxAggregateOutputType = {
+    sensor: number | null
+    enabled: boolean | null
+    updatedAt: Date | null
+  }
+
+  export type SensorConfigCountAggregateOutputType = {
+    sensor: number
+    enabled: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type SensorConfigAvgAggregateInputType = {
+    sensor?: true
+  }
+
+  export type SensorConfigSumAggregateInputType = {
+    sensor?: true
+  }
+
+  export type SensorConfigMinAggregateInputType = {
+    sensor?: true
+    enabled?: true
+    updatedAt?: true
+  }
+
+  export type SensorConfigMaxAggregateInputType = {
+    sensor?: true
+    enabled?: true
+    updatedAt?: true
+  }
+
+  export type SensorConfigCountAggregateInputType = {
+    sensor?: true
+    enabled?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type SensorConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SensorConfig to aggregate.
+     */
+    where?: SensorConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SensorConfigs to fetch.
+     */
+    orderBy?: SensorConfigOrderByWithRelationInput | SensorConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SensorConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SensorConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SensorConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SensorConfigs
+    **/
+    _count?: true | SensorConfigCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SensorConfigAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SensorConfigSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SensorConfigMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SensorConfigMaxAggregateInputType
+  }
+
+  export type GetSensorConfigAggregateType<T extends SensorConfigAggregateArgs> = {
+        [P in keyof T & keyof AggregateSensorConfig]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSensorConfig[P]>
+      : GetScalarType<T[P], AggregateSensorConfig[P]>
+  }
+
+
+
+
+  export type SensorConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SensorConfigWhereInput
+    orderBy?: SensorConfigOrderByWithAggregationInput | SensorConfigOrderByWithAggregationInput[]
+    by: SensorConfigScalarFieldEnum[] | SensorConfigScalarFieldEnum
+    having?: SensorConfigScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SensorConfigCountAggregateInputType | true
+    _avg?: SensorConfigAvgAggregateInputType
+    _sum?: SensorConfigSumAggregateInputType
+    _min?: SensorConfigMinAggregateInputType
+    _max?: SensorConfigMaxAggregateInputType
+  }
+
+  export type SensorConfigGroupByOutputType = {
+    sensor: number
+    enabled: boolean
+    updatedAt: Date
+    _count: SensorConfigCountAggregateOutputType | null
+    _avg: SensorConfigAvgAggregateOutputType | null
+    _sum: SensorConfigSumAggregateOutputType | null
+    _min: SensorConfigMinAggregateOutputType | null
+    _max: SensorConfigMaxAggregateOutputType | null
+  }
+
+  type GetSensorConfigGroupByPayload<T extends SensorConfigGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SensorConfigGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SensorConfigGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SensorConfigGroupByOutputType[P]>
+            : GetScalarType<T[P], SensorConfigGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SensorConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    sensor?: boolean
+    enabled?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["sensorConfig"]>
+
+  export type SensorConfigSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    sensor?: boolean
+    enabled?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["sensorConfig"]>
+
+  export type SensorConfigSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    sensor?: boolean
+    enabled?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["sensorConfig"]>
+
+  export type SensorConfigSelectScalar = {
+    sensor?: boolean
+    enabled?: boolean
+    updatedAt?: boolean
+  }
+
+  export type SensorConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"sensor" | "enabled" | "updatedAt", ExtArgs["result"]["sensorConfig"]>
+
+  export type $SensorConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SensorConfig"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      sensor: number
+      enabled: boolean
+      updatedAt: Date
+    }, ExtArgs["result"]["sensorConfig"]>
+    composites: {}
+  }
+
+  type SensorConfigGetPayload<S extends boolean | null | undefined | SensorConfigDefaultArgs> = $Result.GetResult<Prisma.$SensorConfigPayload, S>
+
+  type SensorConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SensorConfigFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SensorConfigCountAggregateInputType | true
+    }
+
+  export interface SensorConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SensorConfig'], meta: { name: 'SensorConfig' } }
+    /**
+     * Find zero or one SensorConfig that matches the filter.
+     * @param {SensorConfigFindUniqueArgs} args - Arguments to find a SensorConfig
+     * @example
+     * // Get one SensorConfig
+     * const sensorConfig = await prisma.sensorConfig.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SensorConfigFindUniqueArgs>(args: SelectSubset<T, SensorConfigFindUniqueArgs<ExtArgs>>): Prisma__SensorConfigClient<$Result.GetResult<Prisma.$SensorConfigPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SensorConfig that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SensorConfigFindUniqueOrThrowArgs} args - Arguments to find a SensorConfig
+     * @example
+     * // Get one SensorConfig
+     * const sensorConfig = await prisma.sensorConfig.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SensorConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, SensorConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SensorConfigClient<$Result.GetResult<Prisma.$SensorConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SensorConfig that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SensorConfigFindFirstArgs} args - Arguments to find a SensorConfig
+     * @example
+     * // Get one SensorConfig
+     * const sensorConfig = await prisma.sensorConfig.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SensorConfigFindFirstArgs>(args?: SelectSubset<T, SensorConfigFindFirstArgs<ExtArgs>>): Prisma__SensorConfigClient<$Result.GetResult<Prisma.$SensorConfigPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SensorConfig that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SensorConfigFindFirstOrThrowArgs} args - Arguments to find a SensorConfig
+     * @example
+     * // Get one SensorConfig
+     * const sensorConfig = await prisma.sensorConfig.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SensorConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, SensorConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__SensorConfigClient<$Result.GetResult<Prisma.$SensorConfigPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SensorConfigs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SensorConfigFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SensorConfigs
+     * const sensorConfigs = await prisma.sensorConfig.findMany()
+     * 
+     * // Get first 10 SensorConfigs
+     * const sensorConfigs = await prisma.sensorConfig.findMany({ take: 10 })
+     * 
+     * // Only select the `sensor`
+     * const sensorConfigWithSensorOnly = await prisma.sensorConfig.findMany({ select: { sensor: true } })
+     * 
+     */
+    findMany<T extends SensorConfigFindManyArgs>(args?: SelectSubset<T, SensorConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SensorConfigPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SensorConfig.
+     * @param {SensorConfigCreateArgs} args - Arguments to create a SensorConfig.
+     * @example
+     * // Create one SensorConfig
+     * const SensorConfig = await prisma.sensorConfig.create({
+     *   data: {
+     *     // ... data to create a SensorConfig
+     *   }
+     * })
+     * 
+     */
+    create<T extends SensorConfigCreateArgs>(args: SelectSubset<T, SensorConfigCreateArgs<ExtArgs>>): Prisma__SensorConfigClient<$Result.GetResult<Prisma.$SensorConfigPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SensorConfigs.
+     * @param {SensorConfigCreateManyArgs} args - Arguments to create many SensorConfigs.
+     * @example
+     * // Create many SensorConfigs
+     * const sensorConfig = await prisma.sensorConfig.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SensorConfigCreateManyArgs>(args?: SelectSubset<T, SensorConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SensorConfigs and returns the data saved in the database.
+     * @param {SensorConfigCreateManyAndReturnArgs} args - Arguments to create many SensorConfigs.
+     * @example
+     * // Create many SensorConfigs
+     * const sensorConfig = await prisma.sensorConfig.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SensorConfigs and only return the `sensor`
+     * const sensorConfigWithSensorOnly = await prisma.sensorConfig.createManyAndReturn({
+     *   select: { sensor: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SensorConfigCreateManyAndReturnArgs>(args?: SelectSubset<T, SensorConfigCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SensorConfigPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SensorConfig.
+     * @param {SensorConfigDeleteArgs} args - Arguments to delete one SensorConfig.
+     * @example
+     * // Delete one SensorConfig
+     * const SensorConfig = await prisma.sensorConfig.delete({
+     *   where: {
+     *     // ... filter to delete one SensorConfig
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SensorConfigDeleteArgs>(args: SelectSubset<T, SensorConfigDeleteArgs<ExtArgs>>): Prisma__SensorConfigClient<$Result.GetResult<Prisma.$SensorConfigPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SensorConfig.
+     * @param {SensorConfigUpdateArgs} args - Arguments to update one SensorConfig.
+     * @example
+     * // Update one SensorConfig
+     * const sensorConfig = await prisma.sensorConfig.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SensorConfigUpdateArgs>(args: SelectSubset<T, SensorConfigUpdateArgs<ExtArgs>>): Prisma__SensorConfigClient<$Result.GetResult<Prisma.$SensorConfigPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SensorConfigs.
+     * @param {SensorConfigDeleteManyArgs} args - Arguments to filter SensorConfigs to delete.
+     * @example
+     * // Delete a few SensorConfigs
+     * const { count } = await prisma.sensorConfig.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SensorConfigDeleteManyArgs>(args?: SelectSubset<T, SensorConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SensorConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SensorConfigUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SensorConfigs
+     * const sensorConfig = await prisma.sensorConfig.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SensorConfigUpdateManyArgs>(args: SelectSubset<T, SensorConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SensorConfigs and returns the data updated in the database.
+     * @param {SensorConfigUpdateManyAndReturnArgs} args - Arguments to update many SensorConfigs.
+     * @example
+     * // Update many SensorConfigs
+     * const sensorConfig = await prisma.sensorConfig.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SensorConfigs and only return the `sensor`
+     * const sensorConfigWithSensorOnly = await prisma.sensorConfig.updateManyAndReturn({
+     *   select: { sensor: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SensorConfigUpdateManyAndReturnArgs>(args: SelectSubset<T, SensorConfigUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SensorConfigPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SensorConfig.
+     * @param {SensorConfigUpsertArgs} args - Arguments to update or create a SensorConfig.
+     * @example
+     * // Update or create a SensorConfig
+     * const sensorConfig = await prisma.sensorConfig.upsert({
+     *   create: {
+     *     // ... data to create a SensorConfig
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SensorConfig we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SensorConfigUpsertArgs>(args: SelectSubset<T, SensorConfigUpsertArgs<ExtArgs>>): Prisma__SensorConfigClient<$Result.GetResult<Prisma.$SensorConfigPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SensorConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SensorConfigCountArgs} args - Arguments to filter SensorConfigs to count.
+     * @example
+     * // Count the number of SensorConfigs
+     * const count = await prisma.sensorConfig.count({
+     *   where: {
+     *     // ... the filter for the SensorConfigs we want to count
+     *   }
+     * })
+    **/
+    count<T extends SensorConfigCountArgs>(
+      args?: Subset<T, SensorConfigCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SensorConfigCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SensorConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SensorConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SensorConfigAggregateArgs>(args: Subset<T, SensorConfigAggregateArgs>): Prisma.PrismaPromise<GetSensorConfigAggregateType<T>>
+
+    /**
+     * Group by SensorConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SensorConfigGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SensorConfigGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SensorConfigGroupByArgs['orderBy'] }
+        : { orderBy?: SensorConfigGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SensorConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSensorConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SensorConfig model
+   */
+  readonly fields: SensorConfigFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SensorConfig.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SensorConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SensorConfig model
+   */
+  interface SensorConfigFieldRefs {
+    readonly sensor: FieldRef<"SensorConfig", 'Int'>
+    readonly enabled: FieldRef<"SensorConfig", 'Boolean'>
+    readonly updatedAt: FieldRef<"SensorConfig", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SensorConfig findUnique
+   */
+  export type SensorConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SensorConfig
+     */
+    select?: SensorConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SensorConfig
+     */
+    omit?: SensorConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which SensorConfig to fetch.
+     */
+    where: SensorConfigWhereUniqueInput
+  }
+
+  /**
+   * SensorConfig findUniqueOrThrow
+   */
+  export type SensorConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SensorConfig
+     */
+    select?: SensorConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SensorConfig
+     */
+    omit?: SensorConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which SensorConfig to fetch.
+     */
+    where: SensorConfigWhereUniqueInput
+  }
+
+  /**
+   * SensorConfig findFirst
+   */
+  export type SensorConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SensorConfig
+     */
+    select?: SensorConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SensorConfig
+     */
+    omit?: SensorConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which SensorConfig to fetch.
+     */
+    where?: SensorConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SensorConfigs to fetch.
+     */
+    orderBy?: SensorConfigOrderByWithRelationInput | SensorConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SensorConfigs.
+     */
+    cursor?: SensorConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SensorConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SensorConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SensorConfigs.
+     */
+    distinct?: SensorConfigScalarFieldEnum | SensorConfigScalarFieldEnum[]
+  }
+
+  /**
+   * SensorConfig findFirstOrThrow
+   */
+  export type SensorConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SensorConfig
+     */
+    select?: SensorConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SensorConfig
+     */
+    omit?: SensorConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which SensorConfig to fetch.
+     */
+    where?: SensorConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SensorConfigs to fetch.
+     */
+    orderBy?: SensorConfigOrderByWithRelationInput | SensorConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SensorConfigs.
+     */
+    cursor?: SensorConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SensorConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SensorConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SensorConfigs.
+     */
+    distinct?: SensorConfigScalarFieldEnum | SensorConfigScalarFieldEnum[]
+  }
+
+  /**
+   * SensorConfig findMany
+   */
+  export type SensorConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SensorConfig
+     */
+    select?: SensorConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SensorConfig
+     */
+    omit?: SensorConfigOmit<ExtArgs> | null
+    /**
+     * Filter, which SensorConfigs to fetch.
+     */
+    where?: SensorConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SensorConfigs to fetch.
+     */
+    orderBy?: SensorConfigOrderByWithRelationInput | SensorConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SensorConfigs.
+     */
+    cursor?: SensorConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SensorConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SensorConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SensorConfigs.
+     */
+    distinct?: SensorConfigScalarFieldEnum | SensorConfigScalarFieldEnum[]
+  }
+
+  /**
+   * SensorConfig create
+   */
+  export type SensorConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SensorConfig
+     */
+    select?: SensorConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SensorConfig
+     */
+    omit?: SensorConfigOmit<ExtArgs> | null
+    /**
+     * The data needed to create a SensorConfig.
+     */
+    data: XOR<SensorConfigCreateInput, SensorConfigUncheckedCreateInput>
+  }
+
+  /**
+   * SensorConfig createMany
+   */
+  export type SensorConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SensorConfigs.
+     */
+    data: SensorConfigCreateManyInput | SensorConfigCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SensorConfig createManyAndReturn
+   */
+  export type SensorConfigCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SensorConfig
+     */
+    select?: SensorConfigSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SensorConfig
+     */
+    omit?: SensorConfigOmit<ExtArgs> | null
+    /**
+     * The data used to create many SensorConfigs.
+     */
+    data: SensorConfigCreateManyInput | SensorConfigCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SensorConfig update
+   */
+  export type SensorConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SensorConfig
+     */
+    select?: SensorConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SensorConfig
+     */
+    omit?: SensorConfigOmit<ExtArgs> | null
+    /**
+     * The data needed to update a SensorConfig.
+     */
+    data: XOR<SensorConfigUpdateInput, SensorConfigUncheckedUpdateInput>
+    /**
+     * Choose, which SensorConfig to update.
+     */
+    where: SensorConfigWhereUniqueInput
+  }
+
+  /**
+   * SensorConfig updateMany
+   */
+  export type SensorConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SensorConfigs.
+     */
+    data: XOR<SensorConfigUpdateManyMutationInput, SensorConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which SensorConfigs to update
+     */
+    where?: SensorConfigWhereInput
+    /**
+     * Limit how many SensorConfigs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SensorConfig updateManyAndReturn
+   */
+  export type SensorConfigUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SensorConfig
+     */
+    select?: SensorConfigSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SensorConfig
+     */
+    omit?: SensorConfigOmit<ExtArgs> | null
+    /**
+     * The data used to update SensorConfigs.
+     */
+    data: XOR<SensorConfigUpdateManyMutationInput, SensorConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which SensorConfigs to update
+     */
+    where?: SensorConfigWhereInput
+    /**
+     * Limit how many SensorConfigs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SensorConfig upsert
+   */
+  export type SensorConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SensorConfig
+     */
+    select?: SensorConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SensorConfig
+     */
+    omit?: SensorConfigOmit<ExtArgs> | null
+    /**
+     * The filter to search for the SensorConfig to update in case it exists.
+     */
+    where: SensorConfigWhereUniqueInput
+    /**
+     * In case the SensorConfig found by the `where` argument doesn't exist, create a new SensorConfig with this data.
+     */
+    create: XOR<SensorConfigCreateInput, SensorConfigUncheckedCreateInput>
+    /**
+     * In case the SensorConfig was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SensorConfigUpdateInput, SensorConfigUncheckedUpdateInput>
+  }
+
+  /**
+   * SensorConfig delete
+   */
+  export type SensorConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SensorConfig
+     */
+    select?: SensorConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SensorConfig
+     */
+    omit?: SensorConfigOmit<ExtArgs> | null
+    /**
+     * Filter which SensorConfig to delete.
+     */
+    where: SensorConfigWhereUniqueInput
+  }
+
+  /**
+   * SensorConfig deleteMany
+   */
+  export type SensorConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SensorConfigs to delete
+     */
+    where?: SensorConfigWhereInput
+    /**
+     * Limit how many SensorConfigs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SensorConfig without action
+   */
+  export type SensorConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SensorConfig
+     */
+    select?: SensorConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SensorConfig
+     */
+    omit?: SensorConfigOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -1949,6 +3048,15 @@ export namespace Prisma {
   };
 
   export type SensorReadingScalarFieldEnum = (typeof SensorReadingScalarFieldEnum)[keyof typeof SensorReadingScalarFieldEnum]
+
+
+  export const SensorConfigScalarFieldEnum: {
+    sensor: 'sensor',
+    enabled: 'enabled',
+    updatedAt: 'updatedAt'
+  };
+
+  export type SensorConfigScalarFieldEnum = (typeof SensorConfigScalarFieldEnum)[keyof typeof SensorConfigScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -2026,6 +3134,13 @@ export namespace Prisma {
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
     
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
   /**
    * Deep Input Types
    */
@@ -2090,6 +3205,50 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"SensorReading"> | Date | string
   }
 
+  export type SensorConfigWhereInput = {
+    AND?: SensorConfigWhereInput | SensorConfigWhereInput[]
+    OR?: SensorConfigWhereInput[]
+    NOT?: SensorConfigWhereInput | SensorConfigWhereInput[]
+    sensor?: IntFilter<"SensorConfig"> | number
+    enabled?: BoolFilter<"SensorConfig"> | boolean
+    updatedAt?: DateTimeFilter<"SensorConfig"> | Date | string
+  }
+
+  export type SensorConfigOrderByWithRelationInput = {
+    sensor?: SortOrder
+    enabled?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SensorConfigWhereUniqueInput = Prisma.AtLeast<{
+    sensor?: number
+    AND?: SensorConfigWhereInput | SensorConfigWhereInput[]
+    OR?: SensorConfigWhereInput[]
+    NOT?: SensorConfigWhereInput | SensorConfigWhereInput[]
+    enabled?: BoolFilter<"SensorConfig"> | boolean
+    updatedAt?: DateTimeFilter<"SensorConfig"> | Date | string
+  }, "sensor">
+
+  export type SensorConfigOrderByWithAggregationInput = {
+    sensor?: SortOrder
+    enabled?: SortOrder
+    updatedAt?: SortOrder
+    _count?: SensorConfigCountOrderByAggregateInput
+    _avg?: SensorConfigAvgOrderByAggregateInput
+    _max?: SensorConfigMaxOrderByAggregateInput
+    _min?: SensorConfigMinOrderByAggregateInput
+    _sum?: SensorConfigSumOrderByAggregateInput
+  }
+
+  export type SensorConfigScalarWhereWithAggregatesInput = {
+    AND?: SensorConfigScalarWhereWithAggregatesInput | SensorConfigScalarWhereWithAggregatesInput[]
+    OR?: SensorConfigScalarWhereWithAggregatesInput[]
+    NOT?: SensorConfigScalarWhereWithAggregatesInput | SensorConfigScalarWhereWithAggregatesInput[]
+    sensor?: IntWithAggregatesFilter<"SensorConfig"> | number
+    enabled?: BoolWithAggregatesFilter<"SensorConfig"> | boolean
+    updatedAt?: DateTimeWithAggregatesFilter<"SensorConfig"> | Date | string
+  }
+
   export type SensorReadingCreateInput = {
     sensor: number
     distance: number
@@ -2148,6 +3307,48 @@ export namespace Prisma {
     angle?: FloatFieldUpdateOperationsInput | number
     unit?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SensorConfigCreateInput = {
+    sensor: number
+    enabled?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type SensorConfigUncheckedCreateInput = {
+    sensor: number
+    enabled?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type SensorConfigUpdateInput = {
+    sensor?: IntFieldUpdateOperationsInput | number
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SensorConfigUncheckedUpdateInput = {
+    sensor?: IntFieldUpdateOperationsInput | number
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SensorConfigCreateManyInput = {
+    sensor: number
+    enabled?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type SensorConfigUpdateManyMutationInput = {
+    sensor?: IntFieldUpdateOperationsInput | number
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SensorConfigUncheckedUpdateManyInput = {
+    sensor?: IntFieldUpdateOperationsInput | number
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -2303,6 +3504,45 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type SensorConfigCountOrderByAggregateInput = {
+    sensor?: SortOrder
+    enabled?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SensorConfigAvgOrderByAggregateInput = {
+    sensor?: SortOrder
+  }
+
+  export type SensorConfigMaxOrderByAggregateInput = {
+    sensor?: SortOrder
+    enabled?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SensorConfigMinOrderByAggregateInput = {
+    sensor?: SortOrder
+    enabled?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SensorConfigSumOrderByAggregateInput = {
+    sensor?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -2325,6 +3565,10 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -2435,6 +3679,19 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
 
