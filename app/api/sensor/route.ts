@@ -1,6 +1,12 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { validateApiKey, unauthorizedResponse } from "@/lib/auth";
+import { sendProximityAlert } from "@/lib/sms";
+
+// Distance (in cm) at or below which we consider an object "very close" and
+// fire the SMS proximity alert. The physical LED/buzzer trigger lives on the
+// device; this threshold only governs the SMS notification.
+const PROXIMITY_THRESHOLD_CM = 5;
 
 // POST /api/sensor
 // Body: { sensor: 1..4, distance: number, angle: 0..360, unit?: string }
@@ -51,9 +57,18 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const unitNormalized = (unit ?? "cm").toLowerCase();
+
   const reading = await prisma.sensorReading.create({
-    data: { sensor, distance, angle, unit: unit ?? "cm" },
+    data: { sensor, distance, angle, unit: unitNormalized },
   });
+
+  // Proximity alert: if the object is very close (<=5cm), notify by SMS.
+  // Awaited but fully self-contained — sendProximityAlert never throws and is
+  // throttled per sensor, so it can neither break nor delay normal readings.
+  if (unitNormalized === "cm" && distance <= PROXIMITY_THRESHOLD_CM) {
+    await sendProximityAlert({ sensor, distance, unit: unitNormalized });
+  }
 
   return Response.json(reading, { status: 201 });
 }

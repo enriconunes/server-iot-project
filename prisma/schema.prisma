@@ -26,3 +26,41 @@ model SensorConfig {
 
   @@map("sensor_config")
 }
+
+// Single physical actuator (LED + buzzer) that share one on/off flag.
+// Singleton row (id = 1). The <=5cm trigger logic lives on the device, not here.
+model ActuatorConfig {
+  id        Int      @id @default(1)
+  enabled   Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+
+  @@map("actuator_config")
+}
+
+// Global on/off switch for SMS sending, persisted in the DB. Singleton (id = 1).
+// When disabled, the server records nothing and sends nothing (saves credits).
+model SmsConfig {
+  id        Int      @id @default(1)
+  enabled   Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+
+  @@map("sms_config")
+}
+
+// Audit log of every SMS the server dispatched. Also acts as the throttle
+// source-of-truth: a new SMS is only sent if the most recent row is >=30s old
+// (so at most 2 SMS/minute). status is 'sent' or 'failed'.
+model SmsLog {
+  id        Int      @id @default(autoincrement())
+  recipient String
+  body      String
+  sensor    Int?
+  distance  Float?
+  status    String   @default("sent")
+  sid       String?
+  error     String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("sms_log")
+}

@@ -7,11 +7,18 @@ import { SearchControls } from "@/components/search-controls"
 import { StatsCards } from "@/components/stats-cards"
 import { RadarAnimation } from "@/components/radar-animation"
 import { PredictionRadar, computePrediction } from "@/components/prediction-radar"
+import { SmsPanel } from "@/components/sms-panel"
 import { Switch } from "@/components/ui/switch"
-import { Power, Sparkles } from "lucide-react"
+import { Power, Sparkles, Lightbulb, Volume2, Siren } from "lucide-react"
 
 interface SensorConfig {
   sensor: number
+  enabled: boolean
+  updatedAt: string
+}
+
+interface ActuatorConfig {
+  id: number
   enabled: boolean
   updatedAt: string
 }
@@ -70,6 +77,8 @@ export default function DashboardPage() {
   const [liveFadeSec, setLiveFadeSec] = useState(5)
   const [sensorConfig, setSensorConfig] = useState<SensorConfig[]>([])
   const [togglingSensor, setTogglingSensor] = useState<number | null>(null)
+  const [actuator, setActuator] = useState<ActuatorConfig | null>(null)
+  const [togglingActuator, setTogglingActuator] = useState(false)
   const [page, setPage] = useState(1)
   const PAGE_SIZE = 15
 
@@ -114,6 +123,42 @@ export default function DashboardPage() {
     const id = setInterval(fetchSensorConfig, 5000)
     return () => clearInterval(id)
   }, [fetchSensorConfig])
+
+  const fetchActuator = useCallback(async () => {
+    try {
+      const res = await fetch("/api/actuators/config", { headers: apiHeaders })
+      if (res.ok) setActuator(await res.json())
+    } catch (e) {
+      console.error("Erro ao buscar atuador:", e)
+    }
+  }, [apiHeaders])
+
+  useEffect(() => {
+    fetchActuator()
+    const id = setInterval(fetchActuator, 5000)
+    return () => clearInterval(id)
+  }, [fetchActuator])
+
+  const toggleActuator = useCallback(
+    async (enabled: boolean) => {
+      setTogglingActuator(true)
+      setActuator((prev) => (prev ? { ...prev, enabled } : prev))
+      try {
+        const res = await fetch("/api/actuators/config", {
+          method: "PATCH",
+          headers: { ...apiHeaders, "Content-Type": "application/json" },
+          body: JSON.stringify({ enabled }),
+        })
+        if (!res.ok) await fetchActuator()
+      } catch (e) {
+        console.error("Erro ao alternar atuador:", e)
+        await fetchActuator()
+      } finally {
+        setTogglingActuator(false)
+      }
+    },
+    [apiHeaders, fetchActuator]
+  )
 
   const toggleSensor = useCallback(
     async (sensor: number, enabled: boolean) => {
@@ -260,8 +305,10 @@ export default function DashboardPage() {
           />
         </div>
 
+        {/* Controles: sensores (esq.) + atuador (dir.) lado a lado em telas grandes */}
+        <div className="mb-8 grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
         {/* Sensor toggles */}
-        <Card className="mb-8 bg-card border-border/50">
+        <Card className="h-full bg-card border-border/50">
           <CardHeader className="border-b border-border/30">
             <CardTitle className="text-base font-semibold flex items-center gap-2">
               <Power className="w-4 h-4 text-primary" />
@@ -272,7 +319,7 @@ export default function DashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4 sm:p-6">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               {SENSOR_IDS.map((id) => {
                 const cfg = sensorConfig.find((c) => c.sensor === id)
                 const enabled = cfg?.enabled ?? false
@@ -304,6 +351,109 @@ export default function DashboardPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Actuator (LED + buzzer) control */}
+        {(() => {
+          const on = actuator?.enabled ?? false
+          return (
+            <Card
+              className={`h-full overflow-hidden transition-colors duration-500 ${
+                on
+                  ? "bg-amber-500/5 border-amber-500/40"
+                  : "bg-card border-border/50"
+              }`}
+            >
+              <CardHeader className="border-b border-border/30">
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <Siren
+                    className={`w-4 h-4 transition-colors ${
+                      on ? "text-amber-400" : "text-muted-foreground"
+                    }`}
+                  />
+                  Atuador de Alerta
+                  <span className="ml-auto text-xs font-normal text-muted-foreground">
+                    LED + Buzzer · ESP32 lê a cada 5s
+                  </span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 sm:p-6">
+                <div
+                  role="button"
+                  tabIndex={togglingActuator ? -1 : 0}
+                  onClick={() => !togglingActuator && toggleActuator(!on)}
+                  onKeyDown={(e) => {
+                    if (togglingActuator) return
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      toggleActuator(!on)
+                    }
+                  }}
+                  aria-pressed={on}
+                  aria-disabled={togglingActuator}
+                  className={`group w-full text-left rounded-xl border p-5 flex items-center gap-5 transition-colors duration-300 ${
+                    togglingActuator ? "cursor-wait" : "cursor-pointer"
+                  } ${
+                    on
+                      ? "border-amber-500/30 bg-amber-500/10"
+                      : "border-border/50 bg-background/40 hover:border-border"
+                  }`}
+                >
+                  {/* Ring with the two actuator icons */}
+                  <div className="relative shrink-0">
+                    <div
+                      className={`relative w-16 h-16 rounded-full border flex items-center justify-center transition-colors duration-300 ${
+                        on
+                          ? "border-amber-400/40 bg-amber-500/10"
+                          : "border-border/60 bg-background"
+                      }`}
+                    >
+                      <Lightbulb
+                        className={`w-7 h-7 transition-colors duration-300 ${
+                          on ? "text-amber-300" : "text-muted-foreground"
+                        }`}
+                      />
+                      <Volume2
+                        className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-background p-0.5 transition-colors duration-300 ${
+                          on ? "text-orange-400" : "text-muted-foreground"
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Label + state */}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          on ? "bg-amber-400 animate-pulse" : "bg-muted-foreground"
+                        }`}
+                      />
+                      Alerta físico
+                    </p>
+                    <p
+                      className={`text-base font-bold mt-1 transition-colors duration-500 ${
+                        on ? "text-amber-300" : "text-muted-foreground"
+                      }`}
+                    >
+                      {on ? "Ativo" : "Desativado"}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {on
+                        ? "LED e buzzer disparam ao detetar um objeto próximo."
+                        : "O alerta físico está silenciado."}
+                    </p>
+                  </div>
+
+                  {/* Switch (visual; whole card is clickable) */}
+                  <div className="shrink-0 pointer-events-none">
+                    <Switch checked={on} disabled={togglingActuator} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })()}
+        </div>
 
         {/* Radars */}
         <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -642,6 +792,11 @@ export default function DashboardPage() {
             </div>
           )}
         </Card>
+
+        {/* SMS: toggle de envio + histórico de mensagens */}
+        <div className="mt-8">
+          <SmsPanel />
+        </div>
 
         {/* Footer legend */}
         <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-muted-foreground">
