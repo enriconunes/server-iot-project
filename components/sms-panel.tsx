@@ -79,7 +79,7 @@ export function SmsPanel() {
     const id = setInterval(() => {
       fetchConfig()
       fetchLog()
-    }, 3000)
+    }, 10000)
     return () => clearInterval(id)
   }, [fetchConfig, fetchLog])
 

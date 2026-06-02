@@ -120,7 +120,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchSensorConfig()
-    const id = setInterval(fetchSensorConfig, 3000)
+    const id = setInterval(fetchSensorConfig, 10000)
     return () => clearInterval(id)
   }, [fetchSensorConfig])
 
@@ -135,7 +135,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchActuator()
-    const id = setInterval(fetchActuator, 3000)
+    const id = setInterval(fetchActuator, 10000)
     return () => clearInterval(id)
   }, [fetchActuator])
 
@@ -314,7 +314,7 @@ export default function DashboardPage() {
               <Power className="w-4 h-4 text-primary" />
               Controle de Sensores
               <span className="ml-auto text-xs font-normal text-muted-foreground">
-                ESP32 lê a cada 3s
+                ESP32 lê a cada 5s
               </span>
             </CardTitle>
           </CardHeader>
@@ -372,7 +372,7 @@ export default function DashboardPage() {
                   />
                   Atuador de Alerta
                   <span className="ml-auto text-xs font-normal text-muted-foreground">
-                    LED · ESP32 lê a cada 3s
+                    LED · ESP32 lê a cada 5s
                   </span>
                 </CardTitle>
               </CardHeader>
