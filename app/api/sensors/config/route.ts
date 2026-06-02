@@ -5,9 +5,9 @@ import { validateApiKey, unauthorizedResponse } from "@/lib/auth";
 const ALL_SENSORS = [1, 2, 3, 4];
 
 async function ensureRows() {
-  // Make sure all 4 sensors exist; default newly-created ones to disabled (operator must enable explicitly)
+  // Make sure all 4 sensors exist; default newly-created ones to enabled.
   await prisma.sensorConfig.createMany({
-    data: ALL_SENSORS.map((sensor) => ({ sensor, enabled: sensor <= 2 })),
+    data: ALL_SENSORS.map((sensor) => ({ sensor, enabled: true })),
     skipDuplicates: true,
   });
 }

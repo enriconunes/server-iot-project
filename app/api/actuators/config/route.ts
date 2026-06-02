@@ -2,10 +2,10 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { validateApiKey, unauthorizedResponse } from "@/lib/auth";
 
-// There is a single physical actuator (LED + buzzer) that share one on/off flag.
-// We persist it as a singleton row (id = 1). The decision of *when* to fire it
-// (e.g. object detected at <=5cm) lives on the device, not on the server — this
-// endpoint only exposes whether the actuator is allowed to act at all.
+// There is a single physical actuator: an LED. We persist its state as a
+// singleton row (id = 1). The ESP32 sets enabled=true (PATCH) when it detects an
+// object at <=30cm, and reads this state (GET) to drive the LED. It is only ever
+// turned back off from the dashboard toggle — the server just stores the state.
 const ACTUATOR_ID = 1;
 
 async function ensureRow() {

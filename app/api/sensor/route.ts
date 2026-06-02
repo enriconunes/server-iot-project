@@ -4,8 +4,8 @@ import { validateApiKey, unauthorizedResponse } from "@/lib/auth";
 import { sendProximityAlert } from "@/lib/sms";
 
 // Distance (in cm) at or below which we consider an object "very close" and
-// fire the SMS proximity alert. The physical LED/buzzer trigger lives on the
-// device; this threshold only governs the SMS notification.
+// fire the SMS proximity alert. This threshold only governs the SMS; the LED
+// actuator has its own (<=30cm) trigger handled on the ESP32.
 const PROXIMITY_THRESHOLD_CM = 5;
 
 // POST /api/sensor

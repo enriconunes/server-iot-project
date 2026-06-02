@@ -9,7 +9,7 @@ import { RadarAnimation } from "@/components/radar-animation"
 import { PredictionRadar, computePrediction } from "@/components/prediction-radar"
 import { SmsPanel } from "@/components/sms-panel"
 import { Switch } from "@/components/ui/switch"
-import { Power, Sparkles, Lightbulb, Volume2, Siren } from "lucide-react"
+import { Power, Sparkles, Lightbulb, Siren } from "lucide-react"
 
 interface SensorConfig {
   sensor: number
@@ -71,7 +71,7 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [initialLoad, setInitialLoad] = useState(true)
   const [autoRefresh, setAutoRefresh] = useState(false)
-  const [refreshInterval, setRefreshInterval] = useState("2000")
+  const [refreshInterval, setRefreshInterval] = useState("3000")
   const [windowMs, setWindowMs] = useState("600000")
   const [predWindowMs, setPredWindowMs] = useState("3600000")
   const [liveFadeSec, setLiveFadeSec] = useState(5)
@@ -120,7 +120,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchSensorConfig()
-    const id = setInterval(fetchSensorConfig, 5000)
+    const id = setInterval(fetchSensorConfig, 3000)
     return () => clearInterval(id)
   }, [fetchSensorConfig])
 
@@ -135,7 +135,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchActuator()
-    const id = setInterval(fetchActuator, 5000)
+    const id = setInterval(fetchActuator, 3000)
     return () => clearInterval(id)
   }, [fetchActuator])
 
@@ -314,7 +314,7 @@ export default function DashboardPage() {
               <Power className="w-4 h-4 text-primary" />
               Controle de Sensores
               <span className="ml-auto text-xs font-normal text-muted-foreground">
-                ESP32 lê a cada 5s
+                ESP32 lê a cada 3s
               </span>
             </CardTitle>
           </CardHeader>
@@ -352,7 +352,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Actuator (LED + buzzer) control */}
+        {/* Actuator (LED) control */}
         {(() => {
           const on = actuator?.enabled ?? false
           return (
@@ -372,7 +372,7 @@ export default function DashboardPage() {
                   />
                   Atuador de Alerta
                   <span className="ml-auto text-xs font-normal text-muted-foreground">
-                    LED + Buzzer · ESP32 lê a cada 5s
+                    LED · ESP32 lê a cada 3s
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -398,7 +398,7 @@ export default function DashboardPage() {
                       : "border-border/50 bg-background/40 hover:border-border"
                   }`}
                 >
-                  {/* Ring with the two actuator icons */}
+                  {/* Ring with the LED icon */}
                   <div className="relative shrink-0">
                     <div
                       className={`relative w-16 h-16 rounded-full border flex items-center justify-center transition-colors duration-300 ${
@@ -412,11 +412,6 @@ export default function DashboardPage() {
                           on ? "text-amber-300" : "text-muted-foreground"
                         }`}
                       />
-                      <Volume2
-                        className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-background p-0.5 transition-colors duration-300 ${
-                          on ? "text-orange-400" : "text-muted-foreground"
-                        }`}
-                      />
                     </div>
                   </div>
 
@@ -428,19 +423,19 @@ export default function DashboardPage() {
                           on ? "bg-amber-400 animate-pulse" : "bg-muted-foreground"
                         }`}
                       />
-                      Alerta físico
+                      LED de alerta
                     </p>
                     <p
                       className={`text-base font-bold mt-1 transition-colors duration-500 ${
                         on ? "text-amber-300" : "text-muted-foreground"
                       }`}
                     >
-                      {on ? "Ativo" : "Desativado"}
+                      {on ? "Aceso" : "Apagado"}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       {on
-                        ? "LED e buzzer disparam ao detetar um objeto próximo."
-                        : "O alerta físico está silenciado."}
+                        ? "Algo foi detetado a ≤30 cm. Desligue aqui para repor o LED."
+                        : "Acende automaticamente quando algo é detetado a ≤30 cm."}
                     </p>
                   </div>
 

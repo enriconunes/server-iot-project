@@ -27,8 +27,9 @@ model SensorConfig {
   @@map("sensor_config")
 }
 
-// Single physical actuator (LED + buzzer) that share one on/off flag.
-// Singleton row (id = 1). The <=5cm trigger logic lives on the device, not here.
+// Single physical actuator: an LED. Singleton row (id = 1). The ESP32 sets it
+// true on detection (<=30cm) and reads it to drive the LED; the dashboard toggle
+// is what turns it back off. The trigger logic lives on the device, not here.
 model ActuatorConfig {
   id        Int      @id @default(1)
   enabled   Boolean  @default(false)
