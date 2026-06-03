@@ -38,6 +38,18 @@ model ActuatorConfig {
   @@map("actuator_config")
 }
 
+// Rotation motor (servo) on/off, persisted in the DB. Singleton (id = 1).
+// The ESP32 reads this and only sweeps the servo / advances the angle when
+// enabled; when disabled it freezes in place so it resumes from the same angle.
+// Defaults to enabled so the radar rotates out of the box.
+model MotorConfig {
+  id        Int      @id @default(1)
+  enabled   Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+
+  @@map("motor_config")
+}
+
 // Global on/off switch for SMS sending, persisted in the DB. Singleton (id = 1).
 // When disabled, the server records nothing and sends nothing (saves credits).
 model SmsConfig {

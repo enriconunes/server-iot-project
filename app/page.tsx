@@ -9,7 +9,7 @@ import { RadarAnimation } from "@/components/radar-animation"
 import { PredictionRadar, computePrediction } from "@/components/prediction-radar"
 import { SmsPanel } from "@/components/sms-panel"
 import { Switch } from "@/components/ui/switch"
-import { Power, Sparkles, Lightbulb, Siren, Loader2 } from "lucide-react"
+import { Power, Sparkles, Lightbulb, Siren, Loader2, RotateCw } from "lucide-react"
 
 interface SensorConfig {
   sensor: number
@@ -18,6 +18,12 @@ interface SensorConfig {
 }
 
 interface ActuatorConfig {
+  id: number
+  enabled: boolean
+  updatedAt: string
+}
+
+interface MotorConfig {
   id: number
   enabled: boolean
   updatedAt: string
@@ -84,6 +90,9 @@ export default function DashboardPage() {
   const [actuator, setActuator] = useState<ActuatorConfig | null>(null)
   const [togglingActuator, setTogglingActuator] = useState(false)
   const pendingActuatorRef = useRef(false)
+  const [motor, setMotor] = useState<MotorConfig | null>(null)
+  const [togglingMotor, setTogglingMotor] = useState(false)
+  const pendingMotorRef = useRef(false)
   const [page, setPage] = useState(1)
   const PAGE_SIZE = 15
 
@@ -105,6 +114,11 @@ export default function DashboardPage() {
   const setActuatorPending = useCallback((val: boolean) => {
     pendingActuatorRef.current = val
     setTogglingActuator(val)
+  }, [])
+
+  const setMotorPending = useCallback((val: boolean) => {
+    pendingMotorRef.current = val
+    setTogglingMotor(val)
   }, [])
 
   const fetchReadings = useCallback(async () => {
@@ -201,6 +215,52 @@ export default function DashboardPage() {
       }
     },
     [apiHeaders, fetchActuator, setActuatorPending]
+  )
+
+  const fetchMotor = useCallback(async () => {
+    try {
+      const res = await fetch("/api/motor/config", { headers: apiHeaders })
+      if (!res.ok) return
+      const data: MotorConfig = await res.json()
+      // Não sobreponhas um toggle do motor ainda em curso com dados do polling.
+      if (pendingMotorRef.current) return
+      setMotor(data)
+    } catch (e) {
+      console.error("Erro ao buscar motor:", e)
+    }
+  }, [apiHeaders])
+
+  useEffect(() => {
+    fetchMotor()
+    const id = setInterval(fetchMotor, 3000)
+    return () => clearInterval(id)
+  }, [fetchMotor])
+
+  const toggleMotor = useCallback(
+    async (enabled: boolean) => {
+      setMotorPending(true)
+      setMotor((prev) => (prev ? { ...prev, enabled } : prev))
+      try {
+        const res = await fetch("/api/motor/config", {
+          method: "PATCH",
+          headers: { ...apiHeaders, "Content-Type": "application/json" },
+          body: JSON.stringify({ enabled }),
+        })
+        if (res.ok) {
+          setMotor(await res.json())
+        } else {
+          setMotorPending(false)
+          await fetchMotor()
+        }
+      } catch (e) {
+        console.error("Erro ao alternar motor:", e)
+        setMotorPending(false)
+        await fetchMotor()
+      } finally {
+        setMotorPending(false)
+      }
+    },
+    [apiHeaders, fetchMotor, setMotorPending]
   )
 
   const toggleSensor = useCallback(
@@ -358,7 +418,7 @@ export default function DashboardPage() {
           />
         </div>
 
-        {/* Controles: sensores (esq.) + atuador (dir.) lado a lado em telas grandes */}
+        {/* Controles: sensores (esq.) + atuador/LED e motor (dir.) lado a lado em telas grandes */}
         <div className="mb-8 grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
         {/* Sensor toggles */}
         <Card className="h-full bg-card border-border/50">
@@ -410,12 +470,14 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
+        {/* Coluna direita: atuador (LED) + motor empilhados */}
+        <div className="flex flex-col gap-4">
         {/* Actuator (LED) control */}
         {(() => {
           const on = actuator?.enabled ?? false
           return (
             <Card
-              className={`h-full overflow-hidden transition-colors duration-500 ${
+              className={`overflow-hidden transition-colors duration-500 ${
                 on
                   ? "bg-amber-500/5 border-amber-500/40"
                   : "bg-card border-border/50"
@@ -509,6 +571,109 @@ export default function DashboardPage() {
             </Card>
           )
         })()}
+
+        {/* Motor (servo) rotation control */}
+        {(() => {
+          const on = motor?.enabled ?? false
+          return (
+            <Card
+              className={`overflow-hidden transition-colors duration-500 ${
+                on
+                  ? "bg-sky-500/5 border-sky-500/40"
+                  : "bg-card border-border/50"
+              }`}
+            >
+              <CardHeader className="border-b border-border/30">
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <RotateCw
+                    className={`w-4 h-4 transition-colors ${
+                      on ? "text-sky-400" : "text-muted-foreground"
+                    }`}
+                  />
+                  Motor de Rotação
+                  <span className="ml-auto text-xs font-normal text-muted-foreground">
+                    Servo · ESP32 lê a cada 2s
+                  </span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 sm:p-6">
+                <div
+                  role="button"
+                  tabIndex={togglingMotor ? -1 : 0}
+                  onClick={() => !togglingMotor && toggleMotor(!on)}
+                  onKeyDown={(e) => {
+                    if (togglingMotor) return
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      toggleMotor(!on)
+                    }
+                  }}
+                  aria-pressed={on}
+                  aria-disabled={togglingMotor}
+                  className={`group w-full text-left rounded-xl border p-5 flex items-center gap-5 transition-colors duration-300 ${
+                    togglingMotor ? "cursor-wait" : "cursor-pointer"
+                  } ${
+                    on
+                      ? "border-sky-500/30 bg-sky-500/10"
+                      : "border-border/50 bg-background/40 hover:border-border"
+                  }`}
+                >
+                  {/* Ring with the rotation icon */}
+                  <div className="relative shrink-0">
+                    <div
+                      className={`relative w-16 h-16 rounded-full border flex items-center justify-center transition-colors duration-300 ${
+                        on
+                          ? "border-sky-400/40 bg-sky-500/10"
+                          : "border-border/60 bg-background"
+                      }`}
+                    >
+                      <RotateCw
+                        className={`w-7 h-7 transition-colors duration-300 ${
+                          on
+                            ? "text-sky-300 animate-spin [animation-duration:3s]"
+                            : "text-muted-foreground"
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Label + state */}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          on ? "bg-sky-400 animate-pulse" : "bg-muted-foreground"
+                        }`}
+                      />
+                      Varredura do servo
+                    </p>
+                    <p
+                      className={`text-base font-bold mt-1 transition-colors duration-500 ${
+                        on ? "text-sky-300" : "text-muted-foreground"
+                      }`}
+                    >
+                      {on ? "Em rotação" : "Pausado"}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {on
+                        ? "O servo varre continuamente. Desligue para pausar a rotação."
+                        : "Servo parado. Ao reativar, retoma a varredura a partir do mesmo ângulo."}
+                    </p>
+                  </div>
+
+                  {/* Switch (visual; whole card is clickable) */}
+                  <div className="shrink-0 pointer-events-none flex items-center gap-2">
+                    {togglingMotor && (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground" />
+                    )}
+                    <Switch checked={on} disabled={togglingMotor} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })()}
+        </div>
         </div>
 
         {/* Radars */}
