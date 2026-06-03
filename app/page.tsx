@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback, useMemo } from "react"
+import { useEffect, useState, useCallback, useMemo, useRef } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ReadingsTable } from "@/components/readings-table"
 import { SearchControls } from "@/components/search-controls"
@@ -9,7 +9,7 @@ import { RadarAnimation } from "@/components/radar-animation"
 import { PredictionRadar, computePrediction } from "@/components/prediction-radar"
 import { SmsPanel } from "@/components/sms-panel"
 import { Switch } from "@/components/ui/switch"
-import { Power, Sparkles, Lightbulb, Siren } from "lucide-react"
+import { Power, Sparkles, Lightbulb, Siren, Loader2 } from "lucide-react"
 
 interface SensorConfig {
   sensor: number
@@ -76,9 +76,14 @@ export default function DashboardPage() {
   const [predWindowMs, setPredWindowMs] = useState("3600000")
   const [liveFadeSec, setLiveFadeSec] = useState(5)
   const [sensorConfig, setSensorConfig] = useState<SensorConfig[]>([])
-  const [togglingSensor, setTogglingSensor] = useState<number | null>(null)
+  // Sensores com um PATCH em curso. O estado serve para o render (spinner/disabled);
+  // o ref espelho é lido (de forma síncrona) pelo polling para NÃO sobrepor uma
+  // alteração ainda em curso com dados possivelmente desatualizados.
+  const [pendingSensors, setPendingSensors] = useState<Set<number>>(new Set())
+  const pendingSensorsRef = useRef<Set<number>>(new Set())
   const [actuator, setActuator] = useState<ActuatorConfig | null>(null)
   const [togglingActuator, setTogglingActuator] = useState(false)
+  const pendingActuatorRef = useRef(false)
   const [page, setPage] = useState(1)
   const PAGE_SIZE = 15
 
@@ -86,6 +91,21 @@ export default function DashboardPage() {
     () => ({ "x-api-key": process.env.NEXT_PUBLIC_API_KEY ?? "" }),
     []
   )
+
+  // Marca/desmarca um sensor como "PATCH em curso". Atualiza o ref de forma
+  // SÍNCRONA (para o polling ver logo o valor certo) e o estado (para re-render).
+  const setSensorPending = useCallback((sensor: number, val: boolean) => {
+    const next = new Set(pendingSensorsRef.current)
+    if (val) next.add(sensor)
+    else next.delete(sensor)
+    pendingSensorsRef.current = next
+    setPendingSensors(next)
+  }, [])
+
+  const setActuatorPending = useCallback((val: boolean) => {
+    pendingActuatorRef.current = val
+    setTogglingActuator(val)
+  }, [])
 
   const fetchReadings = useCallback(async () => {
     setIsLoading(true)
@@ -112,7 +132,19 @@ export default function DashboardPage() {
   const fetchSensorConfig = useCallback(async () => {
     try {
       const res = await fetch("/api/sensors/config", { headers: apiHeaders })
-      if (res.ok) setSensorConfig(await res.json())
+      if (!res.ok) return
+      const data: SensorConfig[] = await res.json()
+      setSensorConfig((prev) => {
+        const pending = pendingSensorsRef.current
+        if (pending.size === 0) return data
+        // Mantém o valor otimista local dos sensores com PATCH em curso, para o
+        // polling não os fazer "saltar" (liga→desliga→liga) com dados antigos.
+        return data.map((c) =>
+          pending.has(c.sensor)
+            ? prev.find((p) => p.sensor === c.sensor) ?? c
+            : c
+        )
+      })
     } catch (e) {
       console.error("Erro ao buscar config:", e)
     }
@@ -120,14 +152,18 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchSensorConfig()
-    const id = setInterval(fetchSensorConfig, 10000)
+    const id = setInterval(fetchSensorConfig, 3000)
     return () => clearInterval(id)
   }, [fetchSensorConfig])
 
   const fetchActuator = useCallback(async () => {
     try {
       const res = await fetch("/api/actuators/config", { headers: apiHeaders })
-      if (res.ok) setActuator(await res.json())
+      if (!res.ok) return
+      const data: ActuatorConfig = await res.json()
+      // Não sobreponhas um toggle do LED ainda em curso com dados do polling.
+      if (pendingActuatorRef.current) return
+      setActuator(data)
     } catch (e) {
       console.error("Erro ao buscar atuador:", e)
     }
@@ -135,13 +171,13 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchActuator()
-    const id = setInterval(fetchActuator, 10000)
+    const id = setInterval(fetchActuator, 3000)
     return () => clearInterval(id)
   }, [fetchActuator])
 
   const toggleActuator = useCallback(
     async (enabled: boolean) => {
-      setTogglingActuator(true)
+      setActuatorPending(true)
       setActuator((prev) => (prev ? { ...prev, enabled } : prev))
       try {
         const res = await fetch("/api/actuators/config", {
@@ -149,20 +185,27 @@ export default function DashboardPage() {
           headers: { ...apiHeaders, "Content-Type": "application/json" },
           body: JSON.stringify({ enabled }),
         })
-        if (!res.ok) await fetchActuator()
+        if (res.ok) {
+          // Aplica a resposta autoritativa do PATCH (evita depender do próximo poll).
+          setActuator(await res.json())
+        } else {
+          setActuatorPending(false)
+          await fetchActuator()
+        }
       } catch (e) {
         console.error("Erro ao alternar atuador:", e)
+        setActuatorPending(false)
         await fetchActuator()
       } finally {
-        setTogglingActuator(false)
+        setActuatorPending(false)
       }
     },
-    [apiHeaders, fetchActuator]
+    [apiHeaders, fetchActuator, setActuatorPending]
   )
 
   const toggleSensor = useCallback(
     async (sensor: number, enabled: boolean) => {
-      setTogglingSensor(sensor)
+      setSensorPending(sensor, true)
       setSensorConfig((prev) =>
         prev.map((c) => (c.sensor === sensor ? { ...c, enabled } : c))
       )
@@ -172,15 +215,25 @@ export default function DashboardPage() {
           headers: { ...apiHeaders, "Content-Type": "application/json" },
           body: JSON.stringify({ sensor, enabled }),
         })
-        if (!res.ok) await fetchSensorConfig()
+        if (res.ok) {
+          // Aplica a resposta autoritativa do PATCH.
+          const updated: SensorConfig = await res.json()
+          setSensorConfig((prev) =>
+            prev.map((c) => (c.sensor === sensor ? updated : c))
+          )
+        } else {
+          setSensorPending(sensor, false)
+          await fetchSensorConfig()
+        }
       } catch (e) {
         console.error("Erro ao alternar sensor:", e)
+        setSensorPending(sensor, false)
         await fetchSensorConfig()
       } finally {
-        setTogglingSensor(null)
+        setSensorPending(sensor, false)
       }
     },
-    [apiHeaders, fetchSensorConfig]
+    [apiHeaders, fetchSensorConfig, setSensorPending]
   )
 
   useEffect(() => {
@@ -314,7 +367,7 @@ export default function DashboardPage() {
               <Power className="w-4 h-4 text-primary" />
               Controle de Sensores
               <span className="ml-auto text-xs font-normal text-muted-foreground">
-                ESP32 lê a cada 5s
+                ESP32 lê a cada 2s
               </span>
             </CardTitle>
           </CardHeader>
@@ -339,11 +392,16 @@ export default function DashboardPage() {
                           {enabled ? "Ativo" : "Desativado"}
                         </p>
                       </div>
-                      <Switch
-                        checked={enabled}
-                        disabled={togglingSensor === id}
-                        onCheckedChange={(v) => toggleSensor(id, v)}
-                      />
+                      <div className="flex items-center gap-2">
+                        {pendingSensors.has(id) && (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground" />
+                        )}
+                        <Switch
+                          checked={enabled}
+                          disabled={pendingSensors.has(id)}
+                          onCheckedChange={(v) => toggleSensor(id, v)}
+                        />
+                      </div>
                     </div>
                   </div>
                 )
@@ -372,7 +430,7 @@ export default function DashboardPage() {
                   />
                   Atuador de Alerta
                   <span className="ml-auto text-xs font-normal text-muted-foreground">
-                    LED · ESP32 lê a cada 5s
+                    LED · ESP32 lê a cada 2s
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -434,13 +492,16 @@ export default function DashboardPage() {
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       {on
-                        ? "Algo foi detetado a ≤30 cm. Desligue aqui para repor o LED."
+                        ? "Algo foi detetado a ≤30 cm. Pode desligar aqui — mas o LED reacende sozinho na próxima deteção (re-arme automático)."
                         : "Acende automaticamente quando algo é detetado a ≤30 cm."}
                     </p>
                   </div>
 
                   {/* Switch (visual; whole card is clickable) */}
-                  <div className="shrink-0 pointer-events-none">
+                  <div className="shrink-0 pointer-events-none flex items-center gap-2">
+                    {togglingActuator && (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground" />
+                    )}
                     <Switch checked={on} disabled={togglingActuator} />
                   </div>
                 </div>

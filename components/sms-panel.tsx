@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
 import {
@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { MessageSquare, MessageSquareOff, CheckCircle2, XCircle, Inbox } from "lucide-react"
+import { MessageSquare, MessageSquareOff, CheckCircle2, XCircle, Inbox, Loader2 } from "lucide-react"
 
 interface SmsConfig {
   id: number
@@ -48,6 +48,7 @@ function formatDate(dateString: string) {
 export function SmsPanel() {
   const [config, setConfig] = useState<SmsConfig | null>(null)
   const [toggling, setToggling] = useState(false)
+  const pendingRef = useRef(false)
   const [log, setLog] = useState<SmsLogEntry[]>([])
 
   const apiHeaders = useMemo(
@@ -58,7 +59,11 @@ export function SmsPanel() {
   const fetchConfig = useCallback(async () => {
     try {
       const res = await fetch("/api/sms/config", { headers: apiHeaders })
-      if (res.ok) setConfig(await res.json())
+      if (!res.ok) return
+      const data: SmsConfig = await res.json()
+      // Não sobreponhas um toggle ainda em curso com dados do polling.
+      if (pendingRef.current) return
+      setConfig(data)
     } catch (e) {
       console.error("Erro ao buscar config de SMS:", e)
     }
@@ -85,6 +90,7 @@ export function SmsPanel() {
 
   const toggle = useCallback(
     async (enabled: boolean) => {
+      pendingRef.current = true
       setToggling(true)
       setConfig((prev) => (prev ? { ...prev, enabled } : prev))
       try {
@@ -93,11 +99,18 @@ export function SmsPanel() {
           headers: { ...apiHeaders, "Content-Type": "application/json" },
           body: JSON.stringify({ enabled }),
         })
-        if (!res.ok) await fetchConfig()
+        if (res.ok) {
+          setConfig(await res.json())
+        } else {
+          pendingRef.current = false
+          await fetchConfig()
+        }
       } catch (e) {
         console.error("Erro ao alternar SMS:", e)
+        pendingRef.current = false
         await fetchConfig()
       } finally {
+        pendingRef.current = false
         setToggling(false)
       }
     },
@@ -170,7 +183,10 @@ export function SmsPanel() {
             </p>
           </div>
 
-          <div className="shrink-0 pointer-events-none">
+          <div className="shrink-0 pointer-events-none flex items-center gap-2">
+            {toggling && (
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground" />
+            )}
             <Switch checked={enabled} disabled={toggling} />
           </div>
         </div>
