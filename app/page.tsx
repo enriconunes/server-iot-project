@@ -166,7 +166,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchSensorConfig()
-    const id = setInterval(fetchSensorConfig, 3000)
+    const id = setInterval(fetchSensorConfig, 4000)
     return () => clearInterval(id)
   }, [fetchSensorConfig])
 
@@ -185,7 +185,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchActuator()
-    const id = setInterval(fetchActuator, 3000)
+    const id = setInterval(fetchActuator, 2000)
     return () => clearInterval(id)
   }, [fetchActuator])
 
@@ -232,7 +232,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchMotor()
-    const id = setInterval(fetchMotor, 3000)
+    const id = setInterval(fetchMotor, 2000)
     return () => clearInterval(id)
   }, [fetchMotor])
 
@@ -427,7 +427,7 @@ export default function DashboardPage() {
               <Power className="w-4 h-4 text-primary" />
               Controle de Sensores
               <span className="ml-auto text-xs font-normal text-muted-foreground">
-                ESP32 lê a cada 2s
+                ESP32 lê a cada 4s
               </span>
             </CardTitle>
           </CardHeader>
@@ -492,7 +492,7 @@ export default function DashboardPage() {
                   />
                   Atuador de Alerta
                   <span className="ml-auto text-xs font-normal text-muted-foreground">
-                    LED · ESP32 lê a cada 2s
+                    LED · ESP32 lê a cada 1s
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -592,7 +592,7 @@ export default function DashboardPage() {
                   />
                   Motor de Rotação
                   <span className="ml-auto text-xs font-normal text-muted-foreground">
-                    Servo · ESP32 lê a cada 2s
+                    Servo · ESP32 lê a cada 1s
                   </span>
                 </CardTitle>
               </CardHeader>
